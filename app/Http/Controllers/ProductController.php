@@ -2,69 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Asegúrate de importar tu Modelo
-use Inertia\Inertia; // Necesario para renderizar componentes de React
-use Illuminate\Http\Request;
+use App\Models\Product; // Para interactuar con la base de datos
+use Inertia\Inertia;   // Para renderizar vistas de React
+use Illuminate\Http\Request; // Para manejar la petición HTTP
 
 class ProductController extends Controller
 {
+    /**
+     * Display a listing of the resource (READ).
+     */
     public function index()
     {
-        // Obtiene todos los productos
-        $products = Product::all();
-
-        // Renderiza el componente de React (Products/Index.jsx) y le pasa los datos
+        // Obtiene todos los productos y los pasa a la vista de Inertia
         return Inertia::render('Products/Index', [
-            'products' => $products,
+            // Usamos ::all() por simplicidad, pero se recomienda ::paginate() para proyectos grandes
+            'products' => Product::all(),
         ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource (CREATE Form).
      */
     public function create()
     {
-        // Esto renderizará el formulario para crear un producto
+        // Renderiza el componente de React del formulario de creación
         return Inertia::render('Products/Create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage (CREATE Logic).
      */
     public function store(Request $request)
     {
-        // La lógica para guardar el nuevo producto (CRUD: Create)
+        // 1. VALIDACIÓN
+        $validated = $request->validate([
+            // La validación solo incluye los campos que existen en la DB
+            'description' => 'required|string|max:1000',
+            // El precio debe ser un número mayor o igual a cero
+            'price' => 'required|numeric|min:0.01', 
+        ]);
+
+        // 2. GUARDAR
+        Product::create($validated); 
+
+        // 3. REDIRECCIÓN
+        // Redirige al listado (products.index) con un mensaje flash de éxito.
+        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-        // Mostrar un producto individual
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        // Renderiza el formulario para editar un producto
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-        // La lógica para actualizar un producto existente (CRUD: Update)
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
-        // La lógica para eliminar un producto (CRUD: Delete)
-    }
+    // Los métodos 'show', 'edit', 'update' y 'destroy' se implementarán después...
+    
+    public function show(Product $product) { /* ... */ }
+    public function edit(Product $product) { /* ... */ }
+    public function update(Request $request, Product $product) { /* ... */ }
+    public function destroy(Product $product) { /* ... */ }
 }
