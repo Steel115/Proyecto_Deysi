@@ -2,23 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Product; // Asegúrate de importar tu Modelo
+use Inertia\Inertia; // Necesario para renderizar componentes de React
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        // 1. Obtiene todos los productos de la base de datos
-        // Si tienes muchos productos, usarías Product::paginate()
+        // Obtiene todos los productos
         $products = Product::all();
 
-        // 2. Renderiza el componente de React (Products/Index.jsx)
-        // y le pasa los datos de los productos como una "prop"
+        // Renderiza el componente de React (Products/Index.jsx) y le pasa los datos
         return Inertia::render('Products/Index', [
             'products' => $products,
         ]);
