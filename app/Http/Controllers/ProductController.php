@@ -13,9 +13,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // Obtiene todos los productos y los pasa a la vista de Inertia
         return Inertia::render('Products/Index', [
-            // Usamos ::all() por simplicidad, pero se recomienda ::paginate() para proyectos grandes
             'products' => Product::all(),
         ]);
     }
@@ -25,7 +23,6 @@ class ProductController extends Controller
      */
     public function create()
     {
-        // Renderiza el componente de React del formulario de creación
         return Inertia::render('Products/Create');
     }
 
@@ -36,9 +33,7 @@ class ProductController extends Controller
     {
         // 1. VALIDACIÓN
         $validated = $request->validate([
-            // La validación solo incluye los campos que existen en la DB
             'description' => 'required|string|max:1000',
-            // El precio debe ser un número mayor o igual a cero
             'price' => 'required|numeric|min:0.01', 
         ]);
 
@@ -46,14 +41,47 @@ class ProductController extends Controller
         Product::create($validated); 
 
         // 3. REDIRECCIÓN
-        // Redirige al listado (products.index) con un mensaje flash de éxito.
         return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
     }
 
-    // Los métodos 'show', 'edit', 'update' y 'destroy' se implementarán después...
-    
-    public function show(Product $product) { /* ... */ }
-    public function edit(Product $product) { /* ... */ }
-    public function update(Request $request, Product $product) { /* ... */ }
-    public function destroy(Product $product) { /* ... */ }
+    /**
+     * Show the form for editing the specified resource (UPDATE Form).
+     * Pasa el objeto Producto a la vista de edición.
+     */
+    public function edit(Product $product)
+    {
+        return Inertia::render('Products/Edit', [
+            'product' => $product, // Pasamos el producto existente
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage (UPDATE Logic).
+     */
+    public function update(Request $request, Product $product)
+    {
+        // 1. VALIDACIÓN
+        $validated = $request->validate([
+            'description' => 'required|string|max:1000',
+            'price' => 'required|numeric|min:0.01', 
+        ]);
+
+        // 2. ACTUALIZAR
+        $product->update($validated);
+
+        // 3. REDIRECCIÓN
+        return redirect()->route('products.index')->with('success', 'Producto actualizado exitosamente.');
+    }
+
+    /**
+     * Remove the specified resource from storage (DELETE Logic).
+     */
+    public function destroy(Product $product)
+    {
+        // 1. ELIMINAR
+        $product->delete();
+        
+        // 2. REDIRECCIÓN
+        return redirect()->route('products.index')->with('success', 'Producto eliminado exitosamente.');
+    }
 }
