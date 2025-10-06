@@ -17,7 +17,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
-                            <div className="flex shrink-0 items-center">
+                            <div className="flex shrink-0 items-center transtransition duration-200 transform hover:scale-110">
                                 <Link href="/">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"

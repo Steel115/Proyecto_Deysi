@@ -1,27 +1,54 @@
-// resources/js/Pages/Products/Index.jsx
-
-import React from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react'; // Importamos Link para la navegación
+import React, { useState } from 'react'; // Importamos useState para manejar el estado del modal
+// Importación corregida a ruta relativa
+import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout'; 
+import { Head, Link, router } from '@inertiajs/react'; // Importamos 'router' para las peticiones DELETE
+// Importación corregida a ruta relativa
+import ConfirmationModal from '../../Components/ConfirmationModal'; 
 
 // El componente recibe 'auth' y 'products' (la lista de productos)
 export default function Index({ auth, products }) {
     
+    // 1. ESTADOS PARA EL MODAL DE CONFIRMACIÓN
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [productToDelete, setProductToDelete] = useState(null);
+
     // Función para formatear el precio como moneda
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-US', {
+        // Usamos el locale 'es-ES' y 'EUR' como ejemplo, ajústalo a tu moneda real si es diferente a USD
+        return new Intl.NumberFormat('es-ES', { 
             style: 'currency',
             currency: 'USD',
             minimumFractionDigits: 2,
         }).format(price);
     };
 
-    const handleDelete = (e, productId) => {
-        // Muestra un cuadro de confirmación antes de eliminar
-        if (!confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción es irreversible.')) {
-            e.preventDefault();
+    // FUNCIÓN QUE ABRE EL MODAL AL HACER CLICK EN ELIMINAR
+    const handleDeleteClick = (product) => {
+        setProductToDelete(product); // Guardamos el producto en el estado
+        setShowDeleteModal(true);   // Mostramos el modal
+    };
+
+    // FUNCIÓN QUE SE EJECUTA AL CONFIRMAR LA ELIMINACIÓN
+    const confirmDeletion = () => {
+        if (productToDelete) {
+            // Usamos router.delete para enviar la solicitud DELETE a Laravel/Inertia
+            router.delete(route('products.destroy', productToDelete.id), {
+                // Al finalizar la petición (con éxito o error), cerramos el modal
+                onFinish: () => {
+                    setShowDeleteModal(false);
+                    setProductToDelete(null);
+                }
+                // Si quieres añadir lógica para notificaciones de éxito/error, agrégala aquí (onSuccess/onError)
+            });
         }
     };
+    
+    // Función para cerrar el modal sin hacer nada
+    const handleCloseModal = () => {
+        setShowDeleteModal(false);
+        setProductToDelete(null);
+    };
+
 
     return (
         <AuthenticatedLayout
@@ -85,18 +112,16 @@ export default function Index({ auth, products }) {
                                                     Editar
                                                 </Link>
 
-                                                {/* Botón de Eliminar */}
-                                                <Link
-                                                    href={route('products.destroy', product.id)}
-                                                    method="delete" // Importante: usa el método DELETE
-                                                    as="button"
+                                                {/* Botón de Eliminar (AHORA LLAMA A handleDeleteClick) */}
+                                                <button
+                                                    type="button" // Cambiamos de Link a button para evitar la navegación por defecto
+                                                    onClick={() => handleDeleteClick(product)} // Llamamos a la función que muestra el modal
                                                     className="text-gray-100 bg-red-700 hover:bg-red-400 
                                                         px-3 py-1 rounded
                                                         transition duration-150"
-                                                    onClick={handleDelete} // Usa la función de confirmación
                                                 >
                                                     Eliminar
-                                                </Link>
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -113,6 +138,17 @@ export default function Index({ auth, products }) {
                     </div>
                 </div>
             </div>
+
+            {/* 2. RENDERIZACIÓN DEL MODAL DE CONFIRMACIÓN */}
+            <ConfirmationModal
+                show={showDeleteModal}
+                title="Confirmar Eliminación"
+                message={`Estás a punto de eliminar el producto "${productToDelete?.description || 'este producto'}". ¿Deseas continuar?`}
+                onConfirm={confirmDeletion}
+                onClose={handleCloseModal}
+                confirmText="Eliminar Permanentemente"
+            />
+
         </AuthenticatedLayout>
     );
 }
