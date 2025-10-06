@@ -12,14 +12,32 @@ export default function AuthenticatedLayout({ header, children }) {
         useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
+        <div className="min-h-screen bg-gray-200">
+            <nav className="border-b-2 border-black bg-indigo-700">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="54"
+                                        height="54"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="#ffff"
+                                        stroke-width="1"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M3 21l18 0" />
+                                        <path d="M5 21v-14l8 -4v18" />
+                                        <path d="M19 21v-10l-6 -4" />
+                                        <path d="M9 9l0 .01" />
+                                        <path d="M9 12l0 .01" />
+                                        <path d="M9 15l0 .01" />
+                                        <path d="M9 18l0 .01" />
+                                    </svg>
                                 </Link>
                             </div>
 
@@ -31,11 +49,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Dashboard
                                 </NavLink>
                             </div>
-                         
+
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink href={route('products.index')} active={route().current('products.index')}>
-                                Productos
-                            </NavLink>
+                                    Productos
+                                </NavLink>
                             </div>
 
                         </div>
@@ -91,8 +109,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     setShowingNavigationDropdown(
                                         (previousState) => !previousState,
                                     )
-                                }   
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                }
+                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-4   00 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
                             >
                                 <svg
                                     className="h-6 w-6"
@@ -124,6 +142,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     />
                                 </svg>
                             </button>
+                            
                         </div>
                     </div>
                 </div>
@@ -179,5 +198,6 @@ export default function AuthenticatedLayout({ header, children }) {
 
             <main>{children}</main>
         </div>
+        
     );
 }

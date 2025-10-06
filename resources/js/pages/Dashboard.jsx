@@ -21,17 +21,18 @@ export default function Dashboard({ auth }) {
                     <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 lg:p-8">
 
                         {/* 1. Mensaje de Bienvenida Personalizado */}
-                        <div className="text-5xl font-bold text-gray-900 mb-4">
+                        <div className="text-lg font-bold text-gray-900 mb-4">
                             ¡Hola, bienvenido de vuelta, {userName}! 👋
                         </div>
 
                         {/* 2. Sección Principal de Contenido del Dashboard */}
-                        <div className="text-gray-700 text-lg mb-6">
+                        <div className="text-gray-700 text-ls mb-6">
                             Ve a la barra de navegación y ve a productos para agregar.
                         </div>
+                        
 
                         {/* 3. Área para la Imagen (Placeholder) */}
-                        <div className="mt-8 p-6 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center justify-center">
+                        <div className="mt-1 p-6 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center justify-center">
                             <img
                                 src="/img/welcome.jpg"
                                 alt="Bienvenido al Dashboard"
