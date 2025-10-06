@@ -1,11 +1,8 @@
-import React, { useState } from 'react'; // Importamos useState para manejar el estado del modal
-// Importación corregida a ruta relativa
+import React, { useState } from 'react'; 
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout'; 
-import { Head, Link, router } from '@inertiajs/react'; // Importamos 'router' para las peticiones DELETE
-// Importación corregida a ruta relativa
+import { Head, Link, router } from '@inertiajs/react'; 
 import ConfirmationModal from '../../Components/ConfirmationModal'; 
 
-// El componente recibe 'auth' y 'products' (la lista de productos)
 export default function Index({ auth, products }) {
     
     // 1. ESTADOS PARA EL MODAL DE CONFIRMACIÓN
@@ -15,9 +12,9 @@ export default function Index({ auth, products }) {
     // Función para formatear el precio como moneda
     const formatPrice = (price) => {
         // Usamos el locale 'es-ES' y 'EUR' como ejemplo, ajústalo a tu moneda real si es diferente a USD
-        return new Intl.NumberFormat('es-ES', { 
+        return new Intl.NumberFormat('es-MX', { 
             style: 'currency',
-            currency: 'USD',
+            currency: 'MXN',
             minimumFractionDigits: 2,
         }).format(price);
     };
