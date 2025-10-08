@@ -1,9 +1,9 @@
 import React, { useState } from 'react'; 
-// Intentamos ruta relativa completa para evitar el alias
-import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout'; 
+// Restaurando el alias estándar de Laravel/Inertia
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'; 
 import { Head, Link, router } from '@inertiajs/react'; 
-// Intentamos ruta relativa completa para evitar el alias
-import ConfirmationModal from '../../Components/ConfirmationModal'; 
+// Restaurando el alias estándar de Laravel/Inertia
+import ConfirmationModal from '@/Components/ConfirmationModal'; 
 
 // El componente recibe 'auth' y 'products' (la lista de productos)
 export default function Index({ auth, products }) {
@@ -30,7 +30,7 @@ export default function Index({ auth, products }) {
     // Abre el modal de eliminación
     const handleDeleteClick = (product) => {
         setProductToDelete(product); 
-        setShowDeleteModal(true);   
+        setShowDeleteModal(true);   
     };
 
     // Confirma la eliminación y llama al backend (DELETE)
@@ -45,10 +45,9 @@ export default function Index({ auth, products }) {
         }
     };
 
-    // --- NUEVA LÓGICA PARA AGREGAR AL CARRITO ---
+    // --- LÓGICA PARA AGREGAR AL CARRITO ---
 
-    // Abre el modal de agregar al carrito
-    // Esta función se llama ahora haciendo click en la descripción del producto.
+    // Abre el modal de agregar al carrito (al hacer clic en la descripción)
     const handleAddToCartClick = (product) => {
         setProductToBuy(product);
         setShowCartModal(true);
@@ -58,7 +57,7 @@ export default function Index({ auth, products }) {
     const confirmAddToCart = () => {
         if (productToBuy) {
             console.log(`¡PRODUCTO AGREGADO!: ${productToBuy.description} con ID ${productToBuy.id}`);
-            // NOTA: Aquí iría la lógica real para guardar el producto en el carrito (ej: una petición POST).
+            // Aquí iría la lógica real para guardar el producto en el carrito.
         }
         // Cerrar el modal de carrito
         setShowCartModal(false);
@@ -103,7 +102,8 @@ export default function Index({ auth, products }) {
                             <table className="min-w-full divide-y divide-gray-800">
                                 <thead className="bg-indigo-200">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">ID</th>
+                                        {/* Título de la columna ID ajustado */}
+                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">ID.CREADOR</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Descripción</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Precio</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Acciones</th>
@@ -113,12 +113,21 @@ export default function Index({ auth, products }) {
                                 <tbody className="bg-white divide-y divide-gray-800">
                                     {products.map((product) => (
                                         <tr key={product.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-xl font-medium text-gray-900">{product.id}</td>
+                                            {/* *** CAMBIO CLAVE AQUÍ *** */}
+                                            {/* Usamos product.id_usuario en lugar de product.user_id */}
+                                            <td className="px-6 py-4 whitespace-nowrap text-xl font-medium text-gray-900">
+                                                <span className="font-bold text-indigo-700">{product.id}</span>
+                                                <span className="text-gray-400">.</span>
+                                                <span className="text-sm font-light text-gray-600">
+                                                    {product.id_usuario || '?'}
+                                                </span>
+                                            </td>
+                                            {/* FIN DEL CAMBIO */}
                                             
-                                            {/* CAMBIO CLAVE: Hacemos la descripción clickeable */}
+                                            {/* Hacemos la descripción clickeable para el carrito */}
                                             <td 
                                                 className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate cursor-pointer hover:text-indigo-600 font-bold transition duration-150"
-                                                onClick={() => handleAddToCartClick(product)} // Llamamos a la función del carrito
+                                                onClick={() => handleAddToCartClick(product)} // Llama a la función del carrito
                                                 title={`Click para agregar ${product.description} al carrito`}
                                             >
                                                 {product.description}
@@ -135,9 +144,9 @@ export default function Index({ auth, products }) {
                                                 <Link 
                                                     href={route('products.edit', product.id)} 
                                                     className="text-gray-100 bg-indigo-700 hover:bg-indigo-800 
-                                                        px-3 py-1 rounded 
-                                                        mr-1 
-                                                        transition duration-150"
+                                                         px-3 py-1 rounded 
+                                                         mr-1 
+                                                         transition duration-150"
                                                 >
                                                     Editar
                                                 </Link>
@@ -147,8 +156,8 @@ export default function Index({ auth, products }) {
                                                     type="button" 
                                                     onClick={() => handleDeleteClick(product)} 
                                                     className="text-gray-100 bg-red-700 hover:bg-red-400 
-                                                        px-3 py-1 rounded
-                                                        transition duration-150"
+                                                         px-3 py-1 rounded
+                                                         transition duration-150"
                                                 >
                                                     Eliminar
                                                 </button>

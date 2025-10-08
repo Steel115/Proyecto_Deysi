@@ -5,49 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\Product; // Para interactuar con la base de datos
 use Inertia\Inertia;   // Para renderizar vistas de React
 use Illuminate\Http\Request; // Para manejar la petición HTTP
+use App\Http\Requests\StoreProductRequest;
+use Illuminate\Support\Facades\Redirect;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource (READ).
-     */
     public function index()
     {
+        // Carga todos los productos
+        $products = Product::all();
+
+        // Envía los productos a la vista Inertia.js (tu Canvas)
         return Inertia::render('Products/Index', [
-            'products' => Product::all(),
+            'products' => $products,
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource (CREATE Form).
-     */
+    
     public function create()
     {
         return Inertia::render('Products/Create');
     }
 
-    /**
-     * Store a newly created resource in storage (CREATE Logic).
-     */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request) 
     {
-        // 1. VALIDACIÓN
-        $validated = $request->validate([
-            'description' => 'required|string|max:1000',
-            'price' => 'required|numeric|min:0.01', 
-        ]);
+        // 1. Obtener los datos validados
+        $validated = $request->validated();
 
-        // 2. GUARDAR
-        Product::create($validated); 
+        // 2. Asociar la ID del usuario autenticado al campo 'id_usuario'
+        // ¡CORRECCIÓN! Usar 'id_usuario' para la ID del creador, NO 'id'.
+        $validated['id_usuario'] = auth()->id(); 
 
-        // 3. REDIRECCIÓN
-        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
+        // 3. Crear el producto
+        Product::create($validated);
+
+        // 4. Redireccionar con éxito
+        return Redirect::route('products.index');
     }
 
-    /**
-     * Show the form for editing the specified resource (UPDATE Form).
-     * Pasa el objeto Producto a la vista de edición.
-     */
     public function edit(Product $product)
     {
         return Inertia::render('Products/Edit', [
