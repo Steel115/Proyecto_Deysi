@@ -15,8 +15,6 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // *** CAMBIO CLAVE PARA EL PUNTO 3 ***
-        // Filtra la consulta: carga SOLO los productos donde 'id_usuario' coincide 
         // con el ID del usuario autenticado.
         $products = Product::where('id_usuario', auth()->id())->get();
 

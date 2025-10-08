@@ -5,8 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
-use App\Models\Product; // <<-- Importado para consultas en Dashboard
-use App\Models\User;    // <<-- Importado para consultas en Dashboard
+use App\Models\Product; 
+use App\Models\User;    
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -20,7 +20,6 @@ Route::get('/', function () {
 // RUTA DEL DASHBOARD MODIFICADA (Carga Global y Usuario Creador)
 Route::get('/dashboard', function () {
     // 1. Obtenemos TODOS los productos y cargamos la relación 'user'.
-    // IMPORTANTE: Asume que la relación en tu modelo Product.php se llama 'user'.
     $products = Product::with('user:id,name')->get();
     
     return Inertia::render('Dashboard', [
