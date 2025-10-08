@@ -187,17 +187,6 @@ export default function Index({ auth, products }) {
                 onClose={handleCloseModal}
                 confirmText="Eliminar Permanentemente"
             />
-
-            {/* 2. MODAL PARA AGREGAR AL CARRITO */}
-            <ConfirmationModal
-                show={showCartModal}
-                title="Agregar Producto"
-                message={`¿Deseas agregar "${productToBuy?.description || 'este producto'}" al carrito de compras?`}
-                onConfirm={confirmAddToCart}
-                onClose={handleCloseModal}
-                confirmText="Agregar al Carrito"
-            />
-
         </AuthenticatedLayout>
     );
 }

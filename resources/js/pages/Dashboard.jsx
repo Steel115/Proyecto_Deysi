@@ -1,47 +1,204 @@
-// resources/js/Pages/Dashboard.jsx
-
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react'; // Importamos Link para el carrito
+import React, { useState } from 'react'; 
 
-// El componente recibe 'auth' que contiene el usuario logueado
-export default function Dashboard({ auth }) {
+// Este componente ahora recibe la prop 'products' con el listado global.
+export default function Dashboard({ auth, products }) {
+    // 1. ESTADO PARA CONTROLAR EL MODAL DE DETALLE
+    const [selectedProduct, setSelectedProduct] = useState(null); 
 
-    // Obtenemos el nombre del usuario para el saludo personalizado
-    const userName = auth.user.name;
+    // 2. ESTADO LOCAL PARA EL CARRITO (Para simular la funcionalidad)
+    // En una aplicación real, esto usaría un Context o Firestore.
+    const [cartItems, setCartItems] = useState([]);
+    
+    // Función para abrir el modal de detalle
+    const handleDetail = (product) => {
+        setSelectedProduct(product);
+    };
+
+    // Función para cerrar el modal de detalle
+    const closeModal = () => {
+        setSelectedProduct(null);
+    };
+
+    // 3. FUNCIÓN PARA AGREGAR PRODUCTO AL CARRITO
+    const addToCart = (product) => {
+        setCartItems(prevItems => {
+            // Buscamos si el producto ya existe en el carrito
+            const exists = prevItems.find(item => item.id === product.id);
+
+            if (exists) {
+                // Si existe, incrementamos la cantidad
+                return prevItems.map(item =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                );
+            } else {
+                // Si no existe, lo agregamos con cantidad 1
+                return [...prevItems, { ...product, quantity: 1 }];
+            }
+        });
+        // Cerramos el modal después de agregar
+        closeModal();
+    };
+
+
+    // Función para formatear el precio como moneda (usando MXN como ejemplo)
+    const formatPrice = (price) => {
+        const numericPrice = parseFloat(price);
+        if (isNaN(numericPrice)) return '$0.00'; 
+
+        return new Intl.NumberFormat('es-MX', { 
+            style: 'currency',
+            currency: 'MXN', 
+            minimumFractionDigits: 2,
+        }).format(numericPrice);
+    };
+
+    // Calculamos el número total de ítems en el carrito para el badge
+    const totalItemsInCart = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-2xl text-gray-800 leading-tight">Dashboard</h2>}
+            // Agregamos el enlace y el contador del carrito al header
+            header={
+                <div className="flex justify-between items-center">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        Inventario Global de Productos (Todos)
+                    </h2>
+                    
+                    {/* BOTÓN / ENLACE AL CARRITO (usando Link para Inertia) */}
+                    <Link 
+                        href={route('cart.index', { items: JSON.stringify(cartItems) })} 
+                        as="button" 
+                        className="relative bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md flex items-center"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.25 3 12.17 3 13c0 1.657 1.343 3 3 3h10a1 1 0 000-2H6a1 1 0 010-2h10a1 1 0 00.894-.553l4-8a1 1 0 00-.93-1.447H3z" />
+                        </svg>
+                        Carrito
+                        {/* Badge de Contador */}
+                        {totalItemsInCart > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                {totalItemsInCart}
+                            </span>
+                        )}
+                    </Link>
+                </div>
+            }
         >
-            <Head title="Dashboard" />
+            <Head title="Dashboard Global" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 lg:p-8">
+                    
+                    {/* Contenedor de las Tarjetas (Responsive Grid) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        
+                        {products.length === 0 ? (
+                            <p className="col-span-full text-center text-gray-500 text-lg py-8 bg-white shadow-xl rounded-xl">
+                                No hay productos agregados en el inventario global.
+                            </p>
+                        ) : (
+                            products.map((product) => (
+                                // Tarjeta de Producto (Estilo limpio y moderno)
+                                <div
+                                    key={product.id}
+                                    className="bg-white overflow-hidden shadow-lg rounded-xl transition duration-300 transform hover:scale-[1.02] hover:shadow-2xl border border-gray-100 flex flex-col"
+                                >
+                                    <div className="p-6 flex flex-col flex-grow">
+                                        
+                                        {/* Nombre del Producto */}
+                                        <h3 className="text-2xl font-extrabold text-gray-900 mb-2 truncate">
+                                            {product.name}
+                                        </h3>
 
-                        {/* 1. Mensaje de Bienvenida Personalizado */}
-                        <div className="text-lg font-bold text-gray-900 mb-4">
-                            ¡Hola, bienvenido de vuelta, {userName}! 👋
-                        </div>
+                                        {/* Precio */}
+                                        <p className="text-3xl font-bold text-indigo-600 mb-4">
+                                            {formatPrice(product.price)}
+                                        </p>
 
-                        {/* 2. Sección Principal de Contenido del Dashboard */}
-                        <div className="text-gray-700 text-ls mb-6">
-                            Ve a la barra de navegación y ve a productos para agregar.
-                        </div>
+                                        {/* Información del Creador (Sección de detalle) */}
+                                        <div className="text-sm text-gray-600 border-t pt-3 mt-auto">
+                                            <p className="font-semibold text-gray-700">
+                                                ID Creador: 
+                                                <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 ml-1 rounded font-bold text-gray-800">
+                                                    {product.id_usuario}
+                                                </span>
+                                            </p>
+                                            <p className="mt-1">
+                                                Agregado por: 
+                                                <span className="font-medium text-indigo-500 ml-1">
+                                                    {product.user_name}
+                                                </span>
+                                            </p>
+                                        </div>
 
-                        {/* 3. Área para la Imagen (Placeholder) */}
-                        <div className="mt-1 p-6 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center justify-center">
-                            <img
-                                src="/img/welcome.jpg"
-                                alt="Bienvenido al Dashboard"
-                                className="w-full max-w-lg sm:max-w-xl md:max-w-1xl lg:max-w-1xl rounded-lg object-contain"
-                            />
-                        </div>
-
+                                        {/* Botón de Comprar (Abre el modal con los datos del producto) */}
+                                        <div className="mt-6">
+                                            <button
+                                                onClick={() => handleDetail(product)} // Cambiado a handleDetail
+                                                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300"
+                                            >
+                                                Ver Detalle
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                        
                     </div>
                 </div>
             </div>
+
+            {/* MODAL DE DETALLE DEL PRODUCTO */}
+            {selectedProduct && (
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 transition-transform transform scale-100">
+                        <h2 className="text-3xl font-bold text-gray-900 border-b pb-3 mb-4 flex items-center justify-between">
+                            Detalle del Producto
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-700 transition duration-150">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </h2>
+                        
+                        <div className="space-y-3">
+                            <p className="text-2xl font-extrabold text-indigo-600">{selectedProduct.name}</p>
+                            <p className="text-lg text-gray-700">
+                                Precio: <span className="font-bold">{formatPrice(selectedProduct.price)}</span>
+                            </p>
+                            <p className="text-md text-gray-600 border-t pt-3">
+                                <span className="font-semibold">Agregado por:</span> {selectedProduct.user_name}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                                <span className="font-semibold">ID Global:</span> {selectedProduct.id}
+                            </p>
+                        </div>
+                        
+                        <div className="mt-6 flex justify-end space-x-4">
+                            {/* Botón para CERRAR */}
+                            <button
+                                onClick={closeModal}
+                                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-4 focus:ring-gray-300"
+                            >
+                                Cancelar
+                            </button>
+                            {/* Botón para AÑADIR AL CARRITO */}
+                            <button
+                                onClick={() => addToCart(selectedProduct)}
+                                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-4 focus:ring-green-300"
+                            >
+                                Añadir al Carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }

@@ -10,12 +10,17 @@ use Illuminate\Support\Facades\Redirect;
 
 class ProductController extends Controller
 {
+    /**
+     * Muestra una lista de los recursos (productos) del usuario autenticado.
+     */
     public function index()
     {
-        // Carga todos los productos
-        $products = Product::all();
+        // *** CAMBIO CLAVE PARA EL PUNTO 3 ***
+        // Filtra la consulta: carga SOLO los productos donde 'id_usuario' coincide 
+        // con el ID del usuario autenticado.
+        $products = Product::where('id_usuario', auth()->id())->get();
 
-        // Envía los productos a la vista Inertia.js (tu Canvas)
+        // Envía los productos a la vista Inertia.js (Products/Index)
         return Inertia::render('Products/Index', [
             'products' => $products,
         ]);
@@ -32,7 +37,6 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         // 2. Asociar la ID del usuario autenticado al campo 'id_usuario'
-        // ¡CORRECCIÓN! Usar 'id_usuario' para la ID del creador, NO 'id'.
         $validated['id_usuario'] = auth()->id(); 
 
         // 3. Crear el producto
@@ -45,18 +49,18 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return Inertia::render('Products/Edit', [
-            'product' => $product, // Pasamos el producto existente
+            'product' => $product, 
         ]);
     }
 
     /**
-     * Update the specified resource in storage (UPDATE Logic).
+     * Actualiza el recurso especificado en el almacenamiento.
      */
     public function update(Request $request, Product $product)
     {
         // 1. VALIDACIÓN
         $validated = $request->validate([
-            'description' => 'required|string|max:1000',
+            'description' => 'required|string|max:1000', 
             'price' => 'required|numeric|min:0.01', 
         ]);
 
@@ -68,7 +72,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage (DELETE Logic).
+     * Elimina el recurso especificado del almacenamiento.
      */
     public function destroy(Product $product)
     {

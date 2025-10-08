@@ -29,4 +29,10 @@ class Product extends Model
         // El producto pertenece a un usuario a través de la clave 'id_usuario'
         return $this->belongsTo(User::class, 'id_usuario');
     }
+
+    public function user()
+{
+    // Esto vincula Product con User a través de la columna 'id_usuario'
+    return $this->belongsTo(User::class, 'id_usuario'); 
+}
 }
