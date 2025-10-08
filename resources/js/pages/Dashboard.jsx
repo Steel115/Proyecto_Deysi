@@ -29,7 +29,6 @@ export default function Dashboard({ auth }) {
                         <div className="text-gray-700 text-ls mb-6">
                             Ve a la barra de navegación y ve a productos para agregar.
                         </div>
-                        
 
                         {/* 3. Área para la Imagen (Placeholder) */}
                         <div className="mt-1 p-6 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center justify-center">

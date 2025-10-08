@@ -1,49 +1,76 @@
 import React, { useState } from 'react'; 
+// Intentamos ruta relativa completa para evitar el alias
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout'; 
 import { Head, Link, router } from '@inertiajs/react'; 
+// Intentamos ruta relativa completa para evitar el alias
 import ConfirmationModal from '../../Components/ConfirmationModal'; 
 
+// El componente recibe 'auth' y 'products' (la lista de productos)
 export default function Index({ auth, products }) {
     
-    // 1. ESTADOS PARA EL MODAL DE CONFIRMACIÓN
+    // 1. ESTADOS PARA EL MODAL DE ELIMINACIÓN
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
 
+    // 2. ESTADOS PARA EL MODAL DE AGREGAR AL CARRITO
+    const [showCartModal, setShowCartModal] = useState(false);
+    const [productToBuy, setProductToBuy] = useState(null);
+
     // Función para formatear el precio como moneda
     const formatPrice = (price) => {
-        // Usamos el locale 'es-ES' y 'EUR' como ejemplo, ajústalo a tu moneda real si es diferente a USD
         return new Intl.NumberFormat('es-MX', { 
             style: 'currency',
-            currency: 'MXN',
+            currency: 'MXN', 
             minimumFractionDigits: 2,
         }).format(price);
     };
 
-    // FUNCIÓN QUE ABRE EL MODAL AL HACER CLICK EN ELIMINAR
+    // --- LÓGICA PARA ELIMINAR ---
+
+    // Abre el modal de eliminación
     const handleDeleteClick = (product) => {
-        setProductToDelete(product); // Guardamos el producto en el estado
-        setShowDeleteModal(true);   // Mostramos el modal
+        setProductToDelete(product); 
+        setShowDeleteModal(true);   
     };
 
-    // FUNCIÓN QUE SE EJECUTA AL CONFIRMAR LA ELIMINACIÓN
+    // Confirma la eliminación y llama al backend (DELETE)
     const confirmDeletion = () => {
         if (productToDelete) {
-            // Usamos router.delete para enviar la solicitud DELETE a Laravel/Inertia
             router.delete(route('products.destroy', productToDelete.id), {
-                // Al finalizar la petición (con éxito o error), cerramos el modal
                 onFinish: () => {
                     setShowDeleteModal(false);
                     setProductToDelete(null);
                 }
-                // Si quieres añadir lógica para notificaciones de éxito/error, agrégala aquí (onSuccess/onError)
             });
         }
     };
-    
-    // Función para cerrar el modal sin hacer nada
+
+    // --- NUEVA LÓGICA PARA AGREGAR AL CARRITO ---
+
+    // Abre el modal de agregar al carrito
+    // Esta función se llama ahora haciendo click en la descripción del producto.
+    const handleAddToCartClick = (product) => {
+        setProductToBuy(product);
+        setShowCartModal(true);
+    };
+
+    // Confirma la adición al carrito (simulación)
+    const confirmAddToCart = () => {
+        if (productToBuy) {
+            console.log(`¡PRODUCTO AGREGADO!: ${productToBuy.description} con ID ${productToBuy.id}`);
+            // NOTA: Aquí iría la lógica real para guardar el producto en el carrito (ej: una petición POST).
+        }
+        // Cerrar el modal de carrito
+        setShowCartModal(false);
+        setProductToBuy(null);
+    };
+
+    // Función para cerrar cualquier modal sin hacer nada
     const handleCloseModal = () => {
         setShowDeleteModal(false);
+        setShowCartModal(false);
         setProductToDelete(null);
+        setProductToBuy(null);
     };
 
 
@@ -88,7 +115,12 @@ export default function Index({ auth, products }) {
                                         <tr key={product.id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-xl font-medium text-gray-900">{product.id}</td>
                                             
-                                            <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate">
+                                            {/* CAMBIO CLAVE: Hacemos la descripción clickeable */}
+                                            <td 
+                                                className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate cursor-pointer hover:text-indigo-600 font-bold transition duration-150"
+                                                onClick={() => handleAddToCartClick(product)} // Llamamos a la función del carrito
+                                                title={`Click para agregar ${product.description} al carrito`}
+                                            >
                                                 {product.description}
                                             </td>
                                             
@@ -96,12 +128,13 @@ export default function Index({ auth, products }) {
                                                 {formatPrice(product.price)}
                                             </td>
                                             
-                                            {/* Columna Acciones con Editar y Eliminar */}
+                                            {/* Columna Acciones: EDITAR y ELIMINAR */}
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                {/* Enlace de Editar */}
+                                                
+                                                {/* --- BOTÓN EDITAR --- */}
                                                 <Link 
                                                     href={route('products.edit', product.id)} 
-                                                    className="text-gray-100 bg-indigo-700 hover:bg-blue-400 
+                                                    className="text-gray-100 bg-indigo-700 hover:bg-indigo-800 
                                                         px-3 py-1 rounded 
                                                         mr-1 
                                                         transition duration-150"
@@ -109,10 +142,10 @@ export default function Index({ auth, products }) {
                                                     Editar
                                                 </Link>
 
-                                                {/* Botón de Eliminar (AHORA LLAMA A handleDeleteClick) */}
+                                                {/* Botón de Eliminar */}
                                                 <button
-                                                    type="button" // Cambiamos de Link a button para evitar la navegación por defecto
-                                                    onClick={() => handleDeleteClick(product)} // Llamamos a la función que muestra el modal
+                                                    type="button" 
+                                                    onClick={() => handleDeleteClick(product)} 
                                                     className="text-gray-100 bg-red-700 hover:bg-red-400 
                                                         px-3 py-1 rounded
                                                         transition duration-150"
@@ -136,7 +169,7 @@ export default function Index({ auth, products }) {
                 </div>
             </div>
 
-            {/* 2. RENDERIZACIÓN DEL MODAL DE CONFIRMACIÓN */}
+            {/* 1. MODAL DE ELIMINACIÓN */}
             <ConfirmationModal
                 show={showDeleteModal}
                 title="Confirmar Eliminación"
@@ -144,6 +177,16 @@ export default function Index({ auth, products }) {
                 onConfirm={confirmDeletion}
                 onClose={handleCloseModal}
                 confirmText="Eliminar Permanentemente"
+            />
+
+            {/* 2. MODAL PARA AGREGAR AL CARRITO */}
+            <ConfirmationModal
+                show={showCartModal}
+                title="Agregar Producto"
+                message={`¿Deseas agregar "${productToBuy?.description || 'este producto'}" al carrito de compras?`}
+                onConfirm={confirmAddToCart}
+                onClose={handleCloseModal}
+                confirmText="Agregar al Carrito"
             />
 
         </AuthenticatedLayout>
