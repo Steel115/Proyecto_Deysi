@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Product; // Para interactuar con la base de datos
 use Inertia\Inertia;   // Para renderizar vistas de React
 use Illuminate\Http\Request; // Para manejar la petición HTTP
 use App\Http\Requests\StoreProductRequest;
 use Illuminate\Support\Facades\Redirect;
+use App\Models\ActivityLog;
 
 class ProductController extends Controller
 {
@@ -38,8 +38,21 @@ class ProductController extends Controller
         $validated['id_usuario'] = auth()->id(); 
 
         // 3. Crear el producto
-        Product::create($validated);
+        $product = Product::create($validated); // ¡Capturamos el objeto $product!
 
+        // ----------------------------------------------------
+        // LOG DE ACTIVIDAD: REGISTRAR LA CREACIÓN
+        // ----------------------------------------------------
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'product_created',
+            'related_type' => 'product',
+            'related_id' => $product->id,
+            // Usamos $product->description, que es un campo que sí se valida
+            'details' => 'Producto creado: ' . $product->description, 
+        ]);
+        // ----------------------------------------------------
+        
         // 4. Redireccionar con éxito
         return Redirect::route('products.index');
     }

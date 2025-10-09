@@ -1,13 +1,13 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 // Restaurando el alias estándar de Laravel/Inertia
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'; 
-import { Head, Link, router } from '@inertiajs/react'; 
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head, Link, router } from '@inertiajs/react';
 // Restaurando el alias estándar de Laravel/Inertia
-import ConfirmationModal from '@/Components/ConfirmationModal'; 
+import ConfirmationModal from '@/Components/ConfirmationModal';
 
 // El componente recibe 'auth' y 'products' (la lista de productos)
 export default function Index({ auth, products }) {
-    
+
     // 1. ESTADOS PARA EL MODAL DE ELIMINACIÓN
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
@@ -18,9 +18,9 @@ export default function Index({ auth, products }) {
 
     // Función para formatear el precio como moneda
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('es-MX', { 
+        return new Intl.NumberFormat('es-MX', {
             style: 'currency',
-            currency: 'MXN', 
+            currency: 'MXN',
             minimumFractionDigits: 2,
         }).format(price);
     };
@@ -29,8 +29,8 @@ export default function Index({ auth, products }) {
 
     // Abre el modal de eliminación
     const handleDeleteClick = (product) => {
-        setProductToDelete(product); 
-        setShowDeleteModal(true);   
+        setProductToDelete(product);
+        setShowDeleteModal(true);
     };
 
     // Confirma la eliminación y llama al backend (DELETE)
@@ -83,20 +83,20 @@ export default function Index({ auth, products }) {
             <div className="py-20">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-9">
-                        
+
                         {/* Encabezado y Botón de Creación */}
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-3xl font-semibold text-gray-900">Inventario de Productos</h3>
-                            
+
                             {/* Botón Nuevo Producto */}
-                            <Link 
-                                href={route('products.create')} 
+                            <Link
+                                href={route('products.create')}
                                 className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-150"
                             >
                                 + Nuevo Producto
                             </Link>
                         </div>
-                        
+
                         {/* Tabla de Productos */}
                         <div className="overflow-x-auto border border-gray-200 rounded-lg ">
                             <table className="min-w-full divide-y divide-gray-800">
@@ -109,7 +109,7 @@ export default function Index({ auth, products }) {
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Acciones</th>
                                     </tr>
                                 </thead>
-                                
+
                                 <tbody className="bg-white divide-y divide-gray-800">
                                     {products.map((product) => (
                                         <tr key={product.id}>
@@ -123,26 +123,26 @@ export default function Index({ auth, products }) {
                                                 </span>
                                             </td>
                                             {/* FIN DEL CAMBIO */}
-                                            
+
                                             {/* Hacemos la descripción clickeable para el carrito */}
-                                            <td 
+                                            <td
                                                 className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate cursor-pointer hover:text-indigo-600 font-bold transition duration-150"
                                                 onClick={() => handleAddToCartClick(product)} // Llama a la función del carrito
                                                 title={`Click para agregar ${product.description} al carrito`}
                                             >
                                                 {product.description}
                                             </td>
-                                            
+
                                             <td className="px-6 py-4 whitespace-nowrap text-xl text-gray-900">
                                                 {formatPrice(product.price)}
                                             </td>
-                                            
+
                                             {/* Columna Acciones: EDITAR y ELIMINAR */}
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                
+
                                                 {/* --- BOTÓN EDITAR --- */}
-                                                <Link 
-                                                    href={route('products.edit', product.id)} 
+                                                <Link
+                                                    href={route('products.edit', product.id)}
                                                     className="text-gray-100 bg-indigo-700 hover:bg-indigo-800 
                                                          px-3 py-1 rounded 
                                                          mr-1 
@@ -153,8 +153,8 @@ export default function Index({ auth, products }) {
 
                                                 {/* Botón de Eliminar */}
                                                 <button
-                                                    type="button" 
-                                                    onClick={() => handleDeleteClick(product)} 
+                                                    type="button"
+                                                    onClick={() => handleDeleteClick(product)}
                                                     className="text-gray-100 bg-red-700 hover:bg-red-400 
                                                          px-3 py-1 rounded
                                                          transition duration-150"
@@ -166,7 +166,7 @@ export default function Index({ auth, products }) {
                                     ))}
                                 </tbody>
                             </table>
-                            
+
                             {/* Mensaje si la tabla está vacía */}
                             {products.length === 0 && (
                                 <p className="p-8 text-center text-gray-500">
@@ -175,6 +175,20 @@ export default function Index({ auth, products }) {
                             )}
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">
+                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-right">
+                    {/* CAMBIO CLAVE: Usamos 'a' en lugar de 'Link' para forzar la descarga sin Inertia */}
+                    <a
+                        href={route('report.activity.download')}
+                        target="_blank" // Esto ayuda a asegurar la nueva navegación
+                        className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                    >
+                        {/* ... SVG Icon ... */}
+                        Descargar Reporte de Actividad (PDF)
+                    </a>
                 </div>
             </div>
 
