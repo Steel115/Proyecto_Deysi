@@ -1,16 +1,16 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react'; // Importamos Link para el carrito
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 
 // Este componente ahora recibe la prop 'products' con el listado global.
 export default function Dashboard({ auth, products }) {
     // 1. ESTADO PARA CONTROLAR EL MODAL DE DETALLE
-    const [selectedProduct, setSelectedProduct] = useState(null); 
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     // 2. ESTADO LOCAL PARA EL CARRITO (Para simular la funcionalidad)
     // En una aplicación real, esto usaría un Context o Firestore.
     const [cartItems, setCartItems] = useState([]);
-    
+
     // Función para abrir el modal de detalle
     const handleDetail = (product) => {
         setSelectedProduct(product);
@@ -47,11 +47,11 @@ export default function Dashboard({ auth, products }) {
     // Función para formatear el precio como moneda (usando MXN como ejemplo)
     const formatPrice = (price) => {
         const numericPrice = parseFloat(price);
-        if (isNaN(numericPrice)) return '$0.00'; 
+        if (isNaN(numericPrice)) return '$0.00';
 
-        return new Intl.NumberFormat('es-MX', { 
+        return new Intl.NumberFormat('es-MX', {
             style: 'currency',
-            currency: 'MXN', 
+            currency: 'MXN',
             minimumFractionDigits: 2,
         }).format(numericPrice);
     };
@@ -65,14 +65,13 @@ export default function Dashboard({ auth, products }) {
             // Agregamos el enlace y el contador del carrito al header
             header={
                 <div className="flex justify-between items-center">
-                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                        Inventario Global de Productos (Todos)
-                    </h2>
-                    
+                    <div className="font-semibold text-2xl text-gray-800 leading-tight dark:text-gray-100">
+                        Gestión de Productos
+                    </div>
                     {/* BOTÓN / ENLACE AL CARRITO (usando Link para Inertia) */}
-                    <Link 
-                        href={route('cart.index', { items: JSON.stringify(cartItems) })} 
-                        as="button" 
+                    <Link
+                        href={route('cart.index', { items: JSON.stringify(cartItems) })}
+                        as="button"
                         className="relative bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md flex items-center"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -93,10 +92,10 @@ export default function Dashboard({ auth, products }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    
+
                     {/* Contenedor de las Tarjetas (Responsive Grid) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        
+
                         {products.length === 0 ? (
                             <p className="col-span-full text-center text-gray-500 text-lg py-8 bg-white shadow-xl rounded-xl">
                                 No hay productos agregados en el inventario global.
@@ -109,7 +108,7 @@ export default function Dashboard({ auth, products }) {
                                     className="bg-white overflow-hidden shadow-lg rounded-xl transition duration-300 transform hover:scale-[1.02] hover:shadow-2xl border border-gray-100 flex flex-col"
                                 >
                                     <div className="p-6 flex flex-col flex-grow">
-                                        
+
                                         {/* Nombre del Producto */}
                                         <h3 className="text-2xl font-extrabold text-gray-900 mb-2 truncate">
                                             {product.name}
@@ -123,13 +122,13 @@ export default function Dashboard({ auth, products }) {
                                         {/* Información del Creador (Sección de detalle) */}
                                         <div className="text-sm text-gray-600 border-t pt-3 mt-auto">
                                             <p className="font-semibold text-gray-700">
-                                                ID Creador: 
+                                                ID Creador:
                                                 <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 ml-1 rounded font-bold text-gray-800">
                                                     {product.id_usuario}
                                                 </span>
                                             </p>
                                             <p className="mt-1">
-                                                Agregado por: 
+                                                Agregado por:
                                                 <span className="font-medium text-indigo-500 ml-1">
                                                     {product.user_name}
                                                 </span>
@@ -149,7 +148,7 @@ export default function Dashboard({ auth, products }) {
                                 </div>
                             ))
                         )}
-                        
+
                     </div>
                 </div>
             </div>
@@ -166,7 +165,7 @@ export default function Dashboard({ auth, products }) {
                                 </svg>
                             </button>
                         </h2>
-                        
+
                         <div className="space-y-3">
                             <p className="text-2xl font-extrabold text-indigo-600">{selectedProduct.name}</p>
                             <p className="text-lg text-gray-700">
@@ -179,7 +178,7 @@ export default function Dashboard({ auth, products }) {
                                 <span className="font-semibold">ID Global:</span> {selectedProduct.id}
                             </p>
                         </div>
-                        
+
                         <div className="mt-6 flex justify-end space-x-4">
                             {/* Botón para CERRAR */}
                             <button

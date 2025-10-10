@@ -76,7 +76,7 @@ export default function Index({ auth, products }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-2xl text-gray-800 leading-tight">Gestión de Productos</h2>}
+            header={<h2 className="font-semibold text-2xl text-gray-800 leading-tight dark:text-gray-100">Gestión de Productos</h2>}
         >
             <Head title="Productos" />
 

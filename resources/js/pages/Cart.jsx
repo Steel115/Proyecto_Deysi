@@ -86,7 +86,7 @@ export default function Cart({ auth, initialCartItems }) {
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight dark:text-gray-100">
                     🛒 Carrito de Compras
                 </h2>
             }
