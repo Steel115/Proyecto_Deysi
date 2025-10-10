@@ -51,15 +51,15 @@ export default function Dashboard({ auth, products }) {
             user={auth.user}
             // Agregamos el enlace y el contador del carrito al header
             header={
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-3">
                     <div className="font-semibold text-2xl text-gray-800 leading-tight dark:text-gray-100">
                         Gestión de Productos
                         <div>
                             <a 
                                 href={route('products.catalog.pdf')}
                                 target="_blank" 
-                                className="text-sm text-indigo-700 dark:text-white hover:text-yellow-500 dark:hover:text-indigo-500 transition-colors duration-200 
-                                 "
+                                className="text-sm font-bold focus-rin bg-green-500 hover:bg-green-600
+                                text-white py-1 px-1 rounded-lg"  
                             >
                                 Imprimir Catálogo (PDF)
                             </a>
