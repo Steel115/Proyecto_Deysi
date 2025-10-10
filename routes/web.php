@@ -50,6 +50,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/report/activity', [App\Http\Controllers\ReportController::class, 'activityReport'])
         ->name('report.activity.download');
+    // RUTAS DEL CARRITO
+    Route::get('/cart', function () {
+        return Inertia::render('Cart/Index');
+    })->name('cart.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
