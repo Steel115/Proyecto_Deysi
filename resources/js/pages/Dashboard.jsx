@@ -1,41 +1,28 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react'; // Importamos Link para el carrito
+import { Head, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 
-// Este componente ahora recibe la prop 'products' con el listado global.
 export default function Dashboard({ auth, products }) {
-    // 1. ESTADO PARA CONTROLAR EL MODAL DE DETALLE
     const [selectedProduct, setSelectedProduct] = useState(null);
-
-    // 2. ESTADO LOCAL PARA EL CARRITO (Para simular la funcionalidad)
-    // En una aplicación real, esto usaría un Context o Firestore.
     const [cartItems, setCartItems] = useState([]);
-
-    // Función para abrir el modal de detalle
     const handleDetail = (product) => {
         setSelectedProduct(product);
     };
-
-    // Función para cerrar el modal de detalle
     const closeModal = () => {
         setSelectedProduct(null);
     };
 
-    // 3. FUNCIÓN PARA AGREGAR PRODUCTO AL CARRITO
     const addToCart = (product) => {
         setCartItems(prevItems => {
-            // Buscamos si el producto ya existe en el carrito
             const exists = prevItems.find(item => item.id === product.id);
 
             if (exists) {
-                // Si existe, incrementamos la cantidad
                 return prevItems.map(item =>
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
             } else {
-                // Si no existe, lo agregamos con cantidad 1
                 return [...prevItems, { ...product, quantity: 1 }];
             }
         });
@@ -67,7 +54,18 @@ export default function Dashboard({ auth, products }) {
                 <div className="flex justify-between items-center">
                     <div className="font-semibold text-2xl text-gray-800 leading-tight dark:text-gray-100">
                         Gestión de Productos
+                        <div>
+                            <a 
+                                href={route('products.catalog.pdf')}
+                                target="_blank" 
+                                className="text-sm text-indigo-700 dark:text-white hover:text-yellow-500 dark:hover:text-indigo-500 transition-colors duration-200 
+                                 "
+                            >
+                                Imprimir Catálogo (PDF)
+                            </a>
+                        </div>
                     </div>
+                    
                     {/* BOTÓN / ENLACE AL CARRITO (usando Link para Inertia) */}
                     <Link
                         href={route('cart.index', { items: JSON.stringify(cartItems) })}

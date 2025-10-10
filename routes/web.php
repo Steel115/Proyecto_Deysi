@@ -54,6 +54,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart', function () {
         return Inertia::render('Cart/Index');
     })->name('cart.index');
+    Route::get('/products/catalog/pdf', [ProductController::class, 'generateCatalogPdf'])
+    ->name('products.catalog.pdf'); 
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });

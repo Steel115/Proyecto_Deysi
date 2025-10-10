@@ -7,6 +7,7 @@ use Illuminate\Http\Request; // Para manejar la petición HTTP
 use App\Http\Requests\StoreProductRequest;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\ActivityLog;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
@@ -23,7 +24,7 @@ class ProductController extends Controller
             'products' => $products,
         ]);
     }
-    
+
     public function create()
     {
         return Inertia::render('Products/Create');
@@ -93,4 +94,21 @@ class ProductController extends Controller
         // 2. REDIRECCIÓN
         return redirect()->route('products.index')->with('success', 'Producto eliminado exitosamente.');
     }
-}
+
+    public function generateCatalogPdf(Request $request)
+    {
+        // 1. Obtener los productos que deseas incluir en el catálogo
+        $products = Product::all();
+
+        // 2. Cargar una vista (Blade) con los datos
+        // Debes crear el archivo 'resources/views/pdf/catalog.blade.php'
+        $pdf = Pdf::loadView('reports.catalog', compact('products'));
+
+        // 3. Devolver el PDF al navegador
+        return $pdf->stream('catalogo-productos.pdf');
+        
+        // O si quieres descargarlo:
+        // return $pdf->download('catalogo-productos.pdf');
+    }
+}       
+
