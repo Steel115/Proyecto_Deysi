@@ -82,16 +82,16 @@ export default function Index({ auth, products }) {
 
             <div className="py-20">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-9">
+                    <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-9 dark:bg-blue-800">
 
                         {/* Encabezado y Botón de Creación */}
                         <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-3xl font-semibold text-gray-900">Inventario de Productos</h3>
+                            <h3 className="text-3xl font-semibold text-gray-900 dark:text-white">Inventario de Productos</h3>
 
                             {/* Botón Nuevo Producto */}
                             <Link
                                 href={route('products.create')}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-150"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-150 dark:bg-blue-950"
                             >
                                 + Nuevo Producto
                             </Link>
@@ -110,15 +110,15 @@ export default function Index({ auth, products }) {
                                     </tr>
                                 </thead>
 
-                                <tbody className="bg-white divide-y divide-gray-800">
+                                <tbody className="bg-white divide-y divide-gray-800 dark:bg-cyan-900 ">
                                     {products.map((product) => (
                                         <tr key={product.id}>
                                             {/* *** CAMBIO CLAVE AQUÍ *** */}
                                             {/* Usamos product.id_usuario en lugar de product.user_id */}
                                             <td className="px-6 py-4 whitespace-nowrap text-xl font-medium text-gray-900">
-                                                <span className="font-bold text-indigo-700">{product.id}</span>
+                                                <span className="font-bold text-indigo-700 dark:text-white">{product.id}</span>
                                                 <span className="text-gray-400">.</span>
-                                                <span className="text-sm font-light text-gray-600">
+                                                <span className="text-sm font-light text-gray-600 dark:text-white">
                                                     {product.id_usuario || '?'}
                                                 </span>
                                             </td>
@@ -126,14 +126,14 @@ export default function Index({ auth, products }) {
 
                                             {/* Hacemos la descripción clickeable para el carrito */}
                                             <td
-                                                className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate cursor-pointer hover:text-indigo-600 font-bold transition duration-150"
+                                                className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white"
                                                 onClick={() => handleAddToCartClick(product)} // Llama a la función del carrito
                                                 title={`Click para agregar ${product.description} al carrito`}
                                             >
                                                 {product.description}
                                             </td>
 
-                                            <td className="px-6 py-4 whitespace-nowrap text-xl text-gray-900">
+                                            <td className="px-6 py-4 whitespace-nowrap text-xl text-gray-900 dark:text-green-400">
                                                 {formatPrice(product.price)}
                                             </td>
 
@@ -146,7 +146,7 @@ export default function Index({ auth, products }) {
                                                     className="text-gray-100 bg-indigo-700 hover:bg-indigo-800 
                                                          px-3 py-1 rounded 
                                                          mr-1 
-                                                         transition duration-150"
+                                                         transition duration-150 "
                                                 >
                                                     Editar
                                                 </Link>
@@ -179,7 +179,7 @@ export default function Index({ auth, products }) {
             </div>
             
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-right">
+                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-right dark:bg-gray-800">
                     {/* CAMBIO CLAVE: Usamos 'a' en lugar de 'Link' para forzar la descarga sin Inertia */}
                     <a
                         href={route('report.activity.download')}

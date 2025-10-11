@@ -21,24 +21,24 @@ export default function Edit({ auth, product }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-2xl text-gray-900 leading-tight">Editar Producto</h2>}
+            header={<h2 className="font-semibold text-2xl text-gray-900 leading-tight dark:text-white">Editar Producto</h2>}
         >
             <Head title="Editar Producto" />
 
-            <div className="py-12">
+            <div className="py-12 dark:text-white">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-6">
+                    <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-6 dark:bg-blue-950">
                         
                         <form onSubmit={submit}>
                             {/* Campo de Descripción */}
                             <div className="mb-4">
-                                <label htmlFor="description" className="block text-3xl font-medium text-gray-900">Descripción</label>
+                                <label htmlFor="description" className="block text-3xl font-medium text-gray-900 dark:text-white">Descripción</label>
                                 <input
                                     id="description"
                                     type="text"
                                     name="description"
                                     value={data.description}
-                                    className="text-xl mt-1 block w-full border-gray-500 rounded-md shadow-sm"
+                                    className="text-xl mt-1 block w-full border-gray-500 rounded-md shadow-sm dark:bg-cyan-600 "
                                     onChange={(e) => setData('description', e.target.value)}
                                 />
                                 {errors.description && <div className="text-red-500 mt-2 text-sm">{errors.description}</div>}
@@ -46,14 +46,14 @@ export default function Edit({ auth, product }) {
                             
                             {/* Campo de Precio */}
                             <div className="mb-4">
-                                <label htmlFor="price" className="block text-3xl font-medium text-gray-900">Precio</label>
+                                <label htmlFor="price" className="block text-3xl font-medium text-gray-900 dark:text-white">Precio</label>
                                 <input
                                     id="price"
                                     type="number"
                                     step="0.01" // Para permitir decimales
                                     name="price"
                                     value={data.price}
-                                    className="text-xl mt-1 block w-full border-gray-500 rounded-md shadow-sm"
+                                    className="text-xl mt-1 block w-full border-gray-500 rounded-md shadow-sm  dark:bg-cyan-600 "
                                     onChange={(e) => setData('price', e.target.value)}
                                 />
                                 {errors.price && <div className="text-red-500 mt-2 text-sm">{errors.price}</div>}

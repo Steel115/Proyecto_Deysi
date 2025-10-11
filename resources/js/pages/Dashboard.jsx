@@ -103,23 +103,23 @@ export default function Dashboard({ auth, products }) {
                                 // Tarjeta de Producto (Estilo limpio y moderno)
                                 <div
                                     key={product.id}
-                                    className="bg-white overflow-hidden shadow-lg rounded-xl transition duration-300 transform hover:scale-[1.02] hover:shadow-2xl border border-gray-100 flex flex-col"
+                                    className="bg-white overflow-hidden shadow-lg rounded-xl transition duration-300 transform hover:scale-[1.02] hover:shadow-2xl border border-gray-100 flex flex-col dark:bg-blue-800 "
                                 >
                                     <div className="p-6 flex flex-col flex-grow">
 
                                         {/* Nombre del Producto */}
-                                        <h3 className="text-2xl font-extrabold text-gray-900 mb-2 truncate">
+                                        <h3 className="text-2xl font-extrabold text-gray-900 mb-2 truncate dark:text-white">
                                             {product.name}
                                         </h3>
 
                                         {/* Precio */}
-                                        <p className="text-3xl font-bold text-indigo-600 mb-4">
+                                        <p className="text-3xl font-bold text-indigo-600 mb-4 dark:text-white">
                                             {formatPrice(product.price)}
                                         </p>
 
                                         {/* Información del Creador (Sección de detalle) */}
-                                        <div className="text-sm text-gray-600 border-t pt-3 mt-auto">
-                                            <p className="font-semibold text-gray-700">
+                                        <div className="text-sm text-gray-600 border-t pt-3 mt-auto dark:text-black">
+                                            <p className="font-semibold text-gray-700 dark:text-black">
                                                 ID Creador:
                                                 <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 ml-1 rounded font-bold text-gray-800">
                                                     {product.id_usuario}
@@ -127,7 +127,7 @@ export default function Dashboard({ auth, products }) {
                                             </p>
                                             <p className="mt-1">
                                                 Agregado por:
-                                                <span className="font-medium text-indigo-500 ml-1">
+                                                <span className="font-medium text-indigo-500 ml-1 dark:text-yellow-300">
                                                     {product.user_name}
                                                 </span>
                                             </p>
