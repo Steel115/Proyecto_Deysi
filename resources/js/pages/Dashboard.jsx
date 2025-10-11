@@ -55,17 +55,17 @@ export default function Dashboard({ auth, products }) {
                     <div className="font-semibold text-2xl text-gray-800 leading-tight dark:text-gray-100">
                         Gestión de Productos
                         <div>
-                            <a 
+                            <a
                                 href={route('products.catalog.pdf')}
-                                target="_blank" 
+                                target="_blank"
                                 className="text-sm font-bold focus-rin bg-green-500 hover:bg-green-600
-                                text-white py-1 px-1 rounded-lg"  
+                                text-white py-1 px-1 rounded-lg"
                             >
                                 Imprimir Catálogo (PDF)
                             </a>
                         </div>
                     </div>
-                    
+
                     {/* BOTÓN / ENLACE AL CARRITO (usando Link para Inertia) */}
                     <Link
                         href={route('cart.index', { items: JSON.stringify(cartItems) })}
@@ -118,15 +118,30 @@ export default function Dashboard({ auth, products }) {
                                         </p>
 
                                         {/* Información del Creador (Sección de detalle) */}
-                                        <div className="text-sm text-gray-600 border-t pt-3 mt-auto dark:text-black">
-                                            <p className="font-semibold text-gray-700 dark:text-black">
+                                        <div className="text-sm border-t pt-3 mt-3 space-y-1">
+
+                                            {/* Stock Disponible (con estilo de bloque y color condicional) */}
+                                            <p className="font-semibold text-gray-700 dark:text-gray-300 flex items-center">
+                                                Stock Disponible:
+                                                <span className={`font-mono text-xs px-2 py-0.5 ml-1 rounded font-bold ${product.stock > 10 ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                                                        product.stock > 0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                                                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                                                    }`}>
+                                                    {product.stock} unidades
+                                                </span>
+                                            </p>
+
+                                            {/* ID Creador (con estilo de bloque) */}
+                                            <p className="font-semibold text-gray-700 dark:text-gray-300 flex items-center">
                                                 ID Creador:
-                                                <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 ml-1 rounded font-bold text-gray-800">
+                                                <span className="font-mono text-xs bg-indigo-100 px-1.5 py-0.5 ml-1 rounded font-bold text-indigo-800 dark:bg-indigo-700 dark:text-indigo-100">
                                                     {product.id_usuario}
                                                 </span>
                                             </p>
-                                            <p className="mt-1">
-                                                Agregado por:
+
+                                            {/* Agregado por (user_name) */}
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 pt-1">
+                                                <span className="font-semibold">Agregado por:</span>
                                                 <span className="font-medium text-indigo-500 ml-1 dark:text-yellow-300">
                                                     {product.user_name}
                                                 </span>
@@ -137,7 +152,8 @@ export default function Dashboard({ auth, products }) {
                                         <div className="mt-6">
                                             <button
                                                 onClick={() => handleDetail(product)} // Cambiado a handleDetail
-                                                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300"
+                                                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300
+                                                "
                                             >
                                                 Ver Detalle
                                             </button>

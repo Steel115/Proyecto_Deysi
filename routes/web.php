@@ -34,6 +34,7 @@ Route::get('/dashboard', function () {
                 'id_usuario' => $product->id_usuario, 
                 // Nombre del creador (tomado de la relación 'user')
                 'user_name' => $product->user ? $product->user->name : 'Usuario Desconocido', 
+                'stock' => $product->stock,
             ];
         })
     ]);

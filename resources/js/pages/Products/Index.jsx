@@ -45,25 +45,6 @@ export default function Index({ auth, products }) {
         }
     };
 
-    // --- LÓGICA PARA AGREGAR AL CARRITO ---
-
-    // Abre el modal de agregar al carrito (al hacer clic en la descripción)
-    const handleAddToCartClick = (product) => {
-        setProductToBuy(product);
-        setShowCartModal(true);
-    };
-
-    // Confirma la adición al carrito (simulación)
-    const confirmAddToCart = () => {
-        if (productToBuy) {
-            console.log(`¡PRODUCTO AGREGADO!: ${productToBuy.description} con ID ${productToBuy.id}`);
-            // Aquí iría la lógica real para guardar el producto en el carrito.
-        }
-        // Cerrar el modal de carrito
-        setShowCartModal(false);
-        setProductToBuy(null);
-    };
-
     // Función para cerrar cualquier modal sin hacer nada
     const handleCloseModal = () => {
         setShowDeleteModal(false);
@@ -106,6 +87,7 @@ export default function Index({ auth, products }) {
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">ID.CREADOR</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Descripción</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Precio</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Stock</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Acciones</th>
                                     </tr>
                                 </thead>
@@ -113,7 +95,6 @@ export default function Index({ auth, products }) {
                                 <tbody className="bg-white divide-y divide-gray-800 dark:bg-cyan-900 ">
                                     {products.map((product) => (
                                         <tr key={product.id}>
-                                            {/* *** CAMBIO CLAVE AQUÍ *** */}
                                             {/* Usamos product.id_usuario en lugar de product.user_id */}
                                             <td className="px-6 py-4 whitespace-nowrap text-xl font-medium text-gray-900">
                                                 <span className="font-bold text-indigo-700 dark:text-white">{product.id}</span>
@@ -122,19 +103,17 @@ export default function Index({ auth, products }) {
                                                     {product.id_usuario || '?'}
                                                 </span>
                                             </td>
-                                            {/* FIN DEL CAMBIO */}
-
-                                            {/* Hacemos la descripción clickeable para el carrito */}
-                                            <td
-                                                className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white"
-                                                onClick={() => handleAddToCartClick(product)} // Llama a la función del carrito
-                                                title={`Click para agregar ${product.description} al carrito`}
-                                            >
+                                            
+                                            <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white">
                                                 {product.description}
                                             </td>
 
                                             <td className="px-6 py-4 whitespace-nowrap text-xl text-gray-900 dark:text-green-400">
                                                 {formatPrice(product.price)}
+                                            </td>
+
+                                            <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white">
+                                                {product.stock}
                                             </td>
 
                                             {/* Columna Acciones: EDITAR y ELIMINAR */}
