@@ -6,9 +6,9 @@ import { Head, useForm } from '@inertiajs/react';
 
 export default function Create({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
-        // Adaptamos el formulario a tu DB: solo description y price
         description: '',
         price: '',
+        stock: 0,
     });
 
     const submit = (e) => {
@@ -27,7 +27,7 @@ export default function Create({ auth }) {
                 <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-6">
                         <form onSubmit={submit}>
-                            
+
                             {/* Campo Descripción */}
                             <div className="mb-4">
                                 <label htmlFor="description" className="block text-2xl font-medium text-gray-900">Descripción</label>
@@ -40,7 +40,7 @@ export default function Create({ auth }) {
                                 />
                                 {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description}</div>}
                             </div>
-                            
+
                             {/* Campo Precio */}
                             <div className="mb-6">
                                 <label htmlFor="price" className="block text-2xl font-medium text-gray-900">Precio</label>
@@ -55,7 +55,24 @@ export default function Create({ auth }) {
                                 />
                                 {errors.price && <div className="text-red-500 text-sm mt-1">{errors.price}</div>}
                             </div>
-                            
+
+                            {/*Campo Stock*/}
+                            <div className="mb-6">
+                                <label htmlFor="stock" className="block text-2xl font-medium text-gray-900">Stock Inicial</label>
+                                <input
+                                    id="stock"
+                                    type="number"
+                                    min="0"
+                                    value={data.stock}
+                                    className="mt-1 block w-full border border-gray-500 rounded-md shadow-xl p-3"
+                                    onChange={(e) => setData('stock', e.target.value)} // <-- Vinculación correcta
+                                    required
+                                />
+                                {errors.stock && <div className="text-red-500 text-sm mt-1">{errors.stock}</div>}
+                            </div>
+
+                            <div className="flex items-center justify-end"></div>
+
                             <div className="flex items-center justify-end">
                                 <button
                                     type="submit"

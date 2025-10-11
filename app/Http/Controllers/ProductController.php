@@ -11,15 +11,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
-    /**
-     * Muestra una lista de los recursos (productos) del usuario autenticado.
-     */
     public function index()
     {
-        // con el ID del usuario autenticado.
         $products = Product::where('id_usuario', auth()->id())->get();
 
-        // Envía los productos a la vista Inertia.js (Products/Index)
         return Inertia::render('Products/Index', [
             'products' => $products,
         ]);
@@ -32,29 +27,17 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request) 
     {
-        // 1. Obtener los datos validados
         $validated = $request->validated();
-
-        // 2. Asociar la ID del usuario autenticado al campo 'id_usuario'
         $validated['id_usuario'] = auth()->id(); 
-
-        // 3. Crear el producto
-        $product = Product::create($validated); // ¡Capturamos el objeto $product!
-
-        // ----------------------------------------------------
-        // LOG DE ACTIVIDAD: REGISTRAR LA CREACIÓN
-        // ----------------------------------------------------
+        $product = Product::create($validated);
         ActivityLog::create([
             'user_id' => auth()->id(),
             'action' => 'product_created',
             'related_type' => 'product',
             'related_id' => $product->id,
-            // Usamos $product->description, que es un campo que sí se valida
             'details' => 'Producto creado: ' . $product->description, 
         ]);
-        // ----------------------------------------------------
-        
-        // 4. Redireccionar con éxito
+    
         return Redirect::route('products.index');
     }
 
@@ -65,50 +48,31 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Actualiza el recurso especificado en el almacenamiento.
-     */
     public function update(Request $request, Product $product)
     {
-        // 1. VALIDACIÓN
         $validated = $request->validate([
             'description' => 'required|string|max:1000', 
-            'price' => 'required|numeric|min:0.01', 
+            'price' => 'required|numeric|min:0.01',
+            'stock' => 'required|integer|min:0', 
         ]);
 
-        // 2. ACTUALIZAR
         $product->update($validated);
 
-        // 3. REDIRECCIÓN
         return redirect()->route('products.index')->with('success', 'Producto actualizado exitosamente.');
     }
 
-    /**
-     * Elimina el recurso especificado del almacenamiento.
-     */
     public function destroy(Product $product)
     {
-        // 1. ELIMINAR
         $product->delete();
-        
-        // 2. REDIRECCIÓN
         return redirect()->route('products.index')->with('success', 'Producto eliminado exitosamente.');
     }
 
     public function generateCatalogPdf(Request $request)
     {
-        // 1. Obtener los productos que deseas incluir en el catálogo
         $products = Product::all();
-
-        // 2. Cargar una vista (Blade) con los datos
-        // Debes crear el archivo 'resources/views/pdf/catalog.blade.php'
         $pdf = Pdf::loadView('reports.catalog', compact('products'));
-
-        // 3. Devolver el PDF al navegador
         return $pdf->stream('catalogo-productos.pdf');
         
-        // O si quieres descargarlo:
-        // return $pdf->download('catalogo-productos.pdf');
     }
 }       
 

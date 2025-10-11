@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
 use App\Models\Product; 
-use App\Models\User;    
+use App\Models\User;
+use App\Http\Controllers\CartController;    
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -50,10 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/report/activity', [App\Http\Controllers\ReportController::class, 'activityReport'])
         ->name('report.activity.download');
-    // RUTAS DEL CARRITO
-    Route::get('/cart', function () {
-        return Inertia::render('Cart/Index');
-    })->name('cart.index');
+    // Rutas de Carrito
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/purchase', [CartController::class, 'completePurchase'])->name('cart.purchase');
     Route::get('/products/catalog/pdf', [ProductController::class, 'generateCatalogPdf'])
     ->name('products.catalog.pdf'); 
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -25,13 +25,9 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // El campo 'description' (descripción) es obligatorio y debe ser una cadena
             'description' => ['required', 'string', 'max:255'],
-            
-            // El campo 'price' (precio) es obligatorio, debe ser un número y mayor que 0
             'price' => ['required', 'numeric', 'min:0'],
-            
-            // Si tu formulario tiene más campos, agrégalos aquí.
+            'stock' => 'required|integer|min:0',
         ];
     }
 

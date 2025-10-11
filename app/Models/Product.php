@@ -18,6 +18,7 @@ class Product extends Model
         'description',
         'price',
         'id_usuario', // ESTO permite que el controlador guarde el valor.
+        'stock',
     ];
 
     /**
