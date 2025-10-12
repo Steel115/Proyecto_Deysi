@@ -8,6 +8,7 @@ export default function Edit({ auth, product }) {
     const { data, setData, put, processing, errors } = useForm({
         description: product.description,
         price: product.price,
+        stock: product.stock, // <- Nuevo campo agregado
     });
 
     const submit = (e) => {
@@ -57,6 +58,22 @@ export default function Edit({ auth, product }) {
                                     onChange={(e) => setData('price', e.target.value)}
                                 />
                                 {errors.price && <div className="text-red-500 mt-2 text-sm">{errors.price}</div>}
+                            </div>
+
+                            {/* NUEVO CAMPO: Stock */}
+                            <div className="mb-4">
+                                <label htmlFor="stock" className="block text-3xl font-medium text-gray-900 dark:text-white">Stock</label>
+                                <input
+                                    id="stock"
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    name="stock"
+                                    value={data.stock}
+                                    className="text-xl mt-1 block w-full border-gray-500 rounded-md shadow-sm  dark:bg-cyan-600 "
+                                    onChange={(e) => setData('stock', e.target.value)}
+                                />
+                                {errors.stock && <div className="text-red-500 mt-2 text-sm">{errors.stock}</div>}
                             </div>
 
                             {/* Botón de Guardar */}

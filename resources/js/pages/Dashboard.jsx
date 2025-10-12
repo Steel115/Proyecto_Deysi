@@ -94,12 +94,13 @@ export default function Dashboard({ auth, products }) {
                     {/* Contenedor de las Tarjetas (Responsive Grid) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-                        {products.length === 0 ? (
+                        {products.filter(product => product.stock > 0).length === 0 ? (
                             <p className="col-span-full text-center text-gray-500 text-lg py-8 bg-white shadow-xl rounded-xl">
                                 No hay productos agregados en el inventario global.
                             </p>
-                        ) : (
-                            products.map((product) => (
+                        ) : (products
+        .filter(product => product.stock > 0)
+                            .map((product) => (
                                 // Tarjeta de Producto (Estilo limpio y moderno)
                                 <div
                                     key={product.id}
