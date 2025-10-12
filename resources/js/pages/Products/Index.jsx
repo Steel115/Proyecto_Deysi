@@ -63,7 +63,8 @@ export default function Index({ auth, products }) {
 
             <div className="py-20">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-9 dark:bg-blue-800">
+                    <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-9 dark:bg-gray-800
+                    ">
 
                         {/* Encabezado y Botón de Creación */}
                         <div className="flex justify-between items-center mb-6">
@@ -72,27 +73,28 @@ export default function Index({ auth, products }) {
                             {/* Botón Nuevo Producto */}
                             <Link
                                 href={route('products.create')}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-150 dark:bg-blue-950"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-150 
+                                dark:indigo-600"
                             >
                                 + Nuevo Producto
                             </Link>
                         </div>
 
                         {/* Tabla de Productos */}
-                        <div className="overflow-x-auto border border-gray-200 rounded-lg ">
+                        <div className="overflow-x-auto rounded-lg ">
                             <table className="min-w-full divide-y divide-gray-800">
-                                <thead className="bg-indigo-200">
+                                <thead className="bg-indigo-200 dark:bg-gray-600 dark:text-gray-300 text-gray-900">
                                     <tr>
                                         {/* Título de la columna ID ajustado */}
-                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">ID.CREADOR</th>
-                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Descripción</th>
-                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Precio</th>
-                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Stock</th>
-                                        <th className="px-6 py-3 text-left text-xl font-medium text-gray-900 uppercase tracking-wider">Acciones</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">ID.CREADOR</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Descripción</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Precio</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Stock</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Acciones</th>
                                     </tr>
                                 </thead>
 
-                                <tbody className="bg-white divide-y divide-gray-800 dark:bg-cyan-900 ">
+                                <tbody className="bg-white divide-y dark:bg-gray-800 dark:divide-gray-700 ">
                                     {products.map((product) => (
                                         <tr key={product.id}>
                                             {/* Usamos product.id_usuario en lugar de product.user_id */}
@@ -103,17 +105,25 @@ export default function Index({ auth, products }) {
                                                     {product.id_usuario || '?'}
                                                 </span>
                                             </td>
-                                            
+
                                             <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white">
                                                 {product.description}
                                             </td>
 
-                                            <td className="px-6 py-4 whitespace-nowrap text-xl text-gray-900 dark:text-green-400">
+                                            <td className="px-6 py-4 whitespace-nowrap text-xl text-green-500 dark:text-green-400">
                                                 {formatPrice(product.price)}
                                             </td>
-
-                                            <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white">
-                                                {product.stock}
+                                            {/* Columna Stock */}
+                                            <td className="px-6 py-4 whitespace-nowrap text-lg font-bold">
+                                                <span className={`px-2 py-1 inline-flex text-base leading-5 rounded-full ${
+                                                    product.stock > 10 ?
+                                                        'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                                                        product.stock > 4 ?
+                                                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                                                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' // Stock <= 0
+                                                    } dark:bg-opacity-20 dark:text-opacity-100`}>
+                                                    {product.stock} unidades
+                                                </span>
                                             </td>
 
                                             {/* Columna Acciones: EDITAR y ELIMINAR */}
@@ -134,9 +144,9 @@ export default function Index({ auth, products }) {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleDeleteClick(product)}
-                                                    className="text-gray-100 bg-red-700 hover:bg-red-400 
+                                                    className="text-gray-100 bg-red-700 hover:bg-red-800 
                                                          px-3 py-1 rounded
-                                                         transition duration-150"
+                                                         transition duration-150 cursor-pointer"
                                                 >
                                                     Eliminar
                                                 </button>
@@ -156,7 +166,7 @@ export default function Index({ auth, products }) {
                     </div>
                 </div>
             </div>
-            
+
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">
                 <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-right dark:bg-gray-800">
                     {/* CAMBIO CLAVE: Usamos 'a' en lugar de 'Link' para forzar la descarga sin Inertia */}

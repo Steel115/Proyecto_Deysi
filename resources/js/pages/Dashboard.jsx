@@ -26,12 +26,8 @@ export default function Dashboard({ auth, products }) {
                 return [...prevItems, { ...product, quantity: 1 }];
             }
         });
-        // Cerramos el modal después de agregar
         closeModal();
     };
-
-
-    // Función para formatear el precio como moneda (usando MXN como ejemplo)
     const formatPrice = (price) => {
         const numericPrice = parseFloat(price);
         if (isNaN(numericPrice)) return '$0.00';
@@ -43,13 +39,12 @@ export default function Dashboard({ auth, products }) {
         }).format(numericPrice);
     };
 
-    // Calculamos el número total de ítems en el carrito para el badge
+
     const totalItemsInCart = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     return (
         <AuthenticatedLayout
             user={auth.user}
-            // Agregamos el enlace y el contador del carrito al header
             header={
                 <div className="flex justify-between items-center gap-3">
                     <div className="font-semibold text-2xl text-gray-800 leading-tight dark:text-gray-100">
@@ -70,7 +65,8 @@ export default function Dashboard({ auth, products }) {
                     <Link
                         href={route('cart.index', { items: JSON.stringify(cartItems) })}
                         as="button"
-                        className="relative bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md flex items-center"
+                        className="relative bg-indigo-600 hover:bg-indigo-700 text-white font-bold 
+                        py-2 px-4 rounded-lg transition duration-150 shadow-md flex items-center cursor-pointer"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.25 3 12.17 3 13c0 1.657 1.343 3 3 3h10a1 1 0 000-2H6a1 1 0 010-2h10a1 1 0 00.894-.553l4-8a1 1 0 00-.93-1.447H3z" />
@@ -91,70 +87,64 @@ export default function Dashboard({ auth, products }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-                    {/* Contenedor de las Tarjetas (Responsive Grid) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
                         {products.filter(product => product.stock > 0).length === 0 ? (
-                            <p className="col-span-full text-center text-gray-500 text-lg py-8 bg-white shadow-xl rounded-xl">
+                            <p className="col-span-full text-center text-gray-500 text-lg py-8 bg-white shadow-xl rounded-xl dark:bg-gray-800 dark:text-gray-400">
                                 No hay productos agregados en el inventario global.
                             </p>
                         ) : (products
-        .filter(product => product.stock > 0)
+                            .filter(product => product.stock > 0)
                             .map((product) => (
-                                // Tarjeta de Producto (Estilo limpio y moderno)
                                 <div
                                     key={product.id}
-                                    className="bg-white overflow-hidden shadow-lg rounded-xl transition duration-300 transform hover:scale-[1.02] hover:shadow-2xl border border-gray-100 flex flex-col dark:bg-blue-800 "
+                                    className="bg-white overflow-hidden shadow-lg rounded-xl transition 
+                                    duration-300 transform hover:scale-[1.02] hover:shadow-2xl border border-gray-200 
+                                    flex flex-col dark:bg-gray-800 dark:border-gray-700"
                                 >
                                     <div className="p-6 flex flex-col flex-grow">
 
-                                        {/* Nombre del Producto */}
-                                        <h3 className="text-2xl font-extrabold text-gray-900 mb-2 truncate dark:text-white">
+                                        <h3 className="text-2xl font-extrabold text-gray-900 mb-2 truncate dark:text-gray-100">
                                             {product.name}
                                         </h3>
 
-                                        {/* Precio */}
-                                        <p className="text-3xl font-bold text-indigo-600 mb-4 dark:text-white">
+                                        <p className="text-3xl font-bold text-green-600 mb-4 dark:text-green-400">
                                             {formatPrice(product.price)}
                                         </p>
 
-                                        {/* Información del Creador (Sección de detalle) */}
-                                        <div className="text-sm border-t pt-3 mt-3 space-y-1">
+                                        <div className="text-sm border-t pt-3 mt-3 space-y-1 dark:border-gray-700">
 
-                                            {/* Stock Disponible (con estilo de bloque y color condicional) */}
                                             <p className="font-semibold text-gray-700 dark:text-gray-300 flex items-center">
                                                 Stock Disponible:
-                                                <span className={`font-mono text-xs px-2 py-0.5 ml-1 rounded font-bold ${product.stock > 10 ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
-                                                        product.stock > 0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
-                                                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                                                <span className={`font-mono text-xs px-2 py-0.5 ml-1 rounded font-bold ${product.stock > 10 ? 'bg-green-100 text-green-800 dark:bg-green-700 dark:text-gray-50' :
+                                                    product.stock > 4 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-gray-50' :
+                                                        'bg-red-100 text-red-800 dark:bg-red-700 dark:text-gray-50'
                                                     }`}>
                                                     {product.stock} unidades
                                                 </span>
                                             </p>
 
-                                            {/* ID Creador (con estilo de bloque) */}
                                             <p className="font-semibold text-gray-700 dark:text-gray-300 flex items-center">
                                                 ID Creador:
-                                                <span className="font-mono text-xs bg-indigo-100 px-1.5 py-0.5 ml-1 rounded font-bold text-indigo-800 dark:bg-indigo-700 dark:text-indigo-100">
+                                                <span className="font-mono text-xs bg-blue-100 px-1.5 py-0.5 ml-1 rounded font-bold text-blue-800 dark:bg-cyan-700 dark:text-white">
                                                     {product.id_usuario}
                                                 </span>
                                             </p>
 
-                                            {/* Agregado por (user_name) */}
                                             <p className="text-xs text-gray-500 dark:text-gray-400 pt-1">
                                                 <span className="font-semibold">Agregado por:</span>
-                                                <span className="font-medium text-indigo-500 ml-1 dark:text-yellow-300">
+                                                <span className="font-medium text-indigo-500 ml-1 dark:text-cyan-400">
                                                     {product.user_name}
                                                 </span>
                                             </p>
                                         </div>
 
-                                        {/* Botón de Comprar (Abre el modal con los datos del producto) */}
                                         <div className="mt-6">
                                             <button
-                                                onClick={() => handleDetail(product)} // Cambiado a handleDetail
-                                                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300
-                                                "
+                                                onClick={() => handleDetail(product)}
+                                                className="w-full bg-green-500 hover:bg-green-600 text-white 
+                                                font-bold py-3 px-4 rounded-lg transition duration-150 shadow-md 
+                                                hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300 cursor-pointer"
                                             >
                                                 Ver Detalle
                                             </button>
@@ -167,6 +157,7 @@ export default function Dashboard({ auth, products }) {
                     </div>
                 </div>
             </div>
+
 
             {/* MODAL DE DETALLE DEL PRODUCTO */}
             {selectedProduct && (

@@ -22,14 +22,14 @@ export default function Edit({ auth, mustVerifyEmail, status }) {
             <Head title="Profile" />
 
             <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
                     {/* 2. PASAMOS user={user} (o user={auth.user}) AL FORMULARIO */}
                     <div className="bg-white dark:bg-gray-800 p-4 shadow sm:rounded-lg sm:p-8">
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
                             className="max-w-xl"
-                            user={user} // <--- ESTO ES LO QUE FALTABA
+                            user={user} 
                         />
                     </div>
 

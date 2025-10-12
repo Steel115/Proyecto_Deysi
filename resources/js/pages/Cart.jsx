@@ -213,7 +213,7 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                         <a 
-                                            href={route('products.index')} 
+                                            href={route('dashboard')} 
                                             className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors duration-200"
                                         >
                                             Continuar comprando
@@ -236,7 +236,9 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                         
                                         <div className="space-y-4">
                                             {cartItems.map(item => (
-                                                <div key={item.id} className="flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow duration-200">
+                                                <div key={item.id} className="flex items-center gap-4 p-4 border bg-gray-200 border-gray-600 
+                                                dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow duration-200
+                                                dark:bg-gray-900">
                                                     <div className="flex-1 min-w-0">
                                                         <p className="font-semibold text-gray-900 dark:text-white truncate">
                                                             {item.name}
@@ -248,7 +250,7 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                                             <p className={`text-xs mt-1 ${
                                                                 item.stock < 10 
                                                                     ? 'text-orange-500 dark:text-orange-400' 
-                                                                    : 'text-gray-400 dark:text-gray-500'
+                                                                    : 'text-green-600 dark:text-green-500'
                                                             }`}>
                                                                 Stock disponible: {item.stock}
                                                             </p>
@@ -259,7 +261,9 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                                         <button 
                                                             onClick={() => updateQuantity(item.id, -1)}
                                                             disabled={item.quantity <= 1}
-                                                            className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                            className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 
+                                                            rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 
+                                                            disabled:cursor-not-allowed transition-colors cursor-pointer"
                                                         >
                                                             −
                                                         </button>
@@ -269,7 +273,9 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                                         <button 
                                                             onClick={() => updateQuantity(item.id, 1)}
                                                             disabled={item.stock && item.quantity >= item.stock}
-                                                            className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                            className="w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 
+                                                            rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 
+                                                            disabled:cursor-not-allowed transition-colors cursor-pointer"
                                                         >
                                                             +
                                                         </button>
@@ -283,7 +289,9 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                                     
                                                     <button 
                                                         onClick={() => removeItem(item.id)}
-                                                        className="p-2 text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors duration-200"
+                                                        className="p-2 text-red-500 hover:text-red-700 
+                                                        dark:hover:text-red-400 transition-colors duration-200
+                                                        cursor-pointer"
                                                         title="Eliminar producto"
                                                     >
                                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,19 +307,20 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                     <div className="lg:w-1/3">
                                         <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-xl shadow-inner sticky top-4">
                                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                                Resumen del pedido
+                                                Resumen del pedido 📋
                                             </h3>
                                             
                                             <div className="space-y-3 mb-4">
-                                                <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                                                <div className="flex justify-between text-gray-800 dark:text-gray-400">
                                                     <span>Productos ({cartItems.length}):</span>
                                                     <span>{formatPrice(subtotal)}</span>
                                                 </div>
-                                                <div className="flex justify-between text-gray-600 dark:text-gray-400">
+                                                <div className="flex justify-between text-sky-700">
                                                     <span>IVA (15%):</span>
                                                     <span>{formatPrice(tax)}</span>
                                                 </div>
-                                                <div className="flex justify-between font-bold text-lg border-t border-gray-200 dark:border-gray-700 pt-3 text-gray-900 dark:text-white">
+                                                <div className="flex justify-between font-bold text-lg border-t border-gray-200 
+                                                dark:border-gray-700 pt-3 text-green-600 dark:text-green-400">
                                                     <span>Total:</span>
                                                     <span>{formatPrice(total)}</span>
                                                 </div>
@@ -320,7 +329,9 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                             <button 
                                                 onClick={handleCheckout}
                                                 disabled={isProcessing}
-                                                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center"
+                                                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 
+                                                text-white font-semibold rounded-lg transition-colors duration-200 flex items-center 
+                                                justify-center cursor-pointer"
                                             >
                                                 {isProcessing ? (
                                                     <>
@@ -338,13 +349,14 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                             <div className="flex gap-3 mt-3">
                                                 <a 
                                                     href={route('products.index')} 
-                                                    className="flex-1 py-2 text-center text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors duration-200"
+                                                    className="flex-1 py-2 text-center text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors duration-200"
                                                 >
                                                     Seguir comprando
                                                 </a>
                                                 <button 
                                                     onClick={() => setCartItems([])}
-                                                    className="flex-1 py-2 text-center text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium transition-colors duration-200"
+                                                    className="flex-1 py-2 text-center text-red-500 hover:text-red-700 dark:text-red-400 
+                                                    dark:hover:text-red-300 font-medium transition-colors duration-200 cursor-pointer"
                                                 >
                                                     Limpiar carrito
                                                 </button>
