@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 
 // El componente recibe el 'product' que le pasamos desde el controlador
 export default function Edit({ auth, product }) {
@@ -8,15 +8,17 @@ export default function Edit({ auth, product }) {
     const { data, setData, put, processing, errors } = useForm({
         description: product.description,
         price: product.price,
-        stock: product.stock, // <- Nuevo campo agregado
+        stock: product.stock,
+        image: null,
+        _method: 'put', // <- Nuevo campo agregado
     });
 
     const submit = (e) => {
         e.preventDefault();
-
+        
         // El método 'put' es el equivalente al método HTTP PUT/PATCH de Laravel
         // Apuntamos a la ruta 'products.update' pasándole el ID del producto
-        put(route('products.update', product.id));
+        router.post(route('products.update', product.id), data);
     };
 
     return (
@@ -79,6 +81,31 @@ export default function Edit({ auth, product }) {
                                     onChange={(e) => setData('stock', e.target.value)}
                                 />
                                 {errors.stock && <div className="text-red-500 mt-2 text-sm">{errors.stock}</div>}
+                            </div>
+                            <div className="mb-6">
+                                <label htmlFor="image" className="block text-2xl font-medium text-gray-900 dark:text-white">Cambiar Imagen</label>
+                                
+                                {/* Imagen Actual */}
+                                <div className="my-2">
+                                    <p className='text-sm mb-2'>Imagen actual:</p>
+                                    <img src={product.image_url} alt="Imagen actual" className="h-40 w-40 object-cover rounded-md" />
+                                </div>
+
+                                <input
+                                    id="image"
+                                    type="file"
+                                    className="mt-1 block w-full text-gray-900 border border-gray-500 rounded-md shadow-xl p-3 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:bg-gray-500 dark:text-white"
+                                    onChange={(e) => setData('image', e.target.files[0])}
+                                />
+                                {errors.image && <div className="text-red-500 mt-2 text-sm">{errors.image}</div>}
+                                
+                                {/* Vista Previa de la nueva imagen */}
+                                {data.image && (
+                                    <div className="mt-4">
+                                        <p className='text-sm mb-2'>Nueva imagen:</p>
+                                        <img src={URL.createObjectURL(data.image)} alt="Vista previa" className="h-40 w-40 object-cover rounded-md"/>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Botón de Guardar */}

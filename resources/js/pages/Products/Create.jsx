@@ -9,6 +9,7 @@ export default function Create({ auth }) {
         description: '',
         price: '',
         stock: 0,
+        image: null,
     });
 
     const submit = (e) => {
@@ -81,6 +82,23 @@ export default function Create({ auth }) {
                                     required
                                 />
                                 {errors.stock && <div className="text-red-500 text-sm mt-1">{errors.stock}</div>}
+                            </div>
+                             <div className="mb-6">
+                                <label htmlFor="image" className="block text-2xl font-medium text-gray-900 dark:text-white">Imagen del Producto</label>
+                                <input
+                                    id="image"
+                                    type="file"
+                                    className="mt-1 block w-full text-gray-900 border border-gray-500 rounded-md shadow-xl p-3 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:bg-gray-500 dark:text-white"
+                                    onChange={(e) => setData('image', e.target.files[0])}
+                                />
+                                {errors.image && <div className="text-red-500 text-sm mt-1">{errors.image}</div>}
+                                
+                                {/* Vista Previa de la Imagen */}
+                                {data.image && (
+                                    <div className="mt-4">
+                                        <img src={URL.createObjectURL(data.image)} alt="Vista previa" className="h-40 w-40 object-cover rounded-md"/>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex items-center justify-end"></div>

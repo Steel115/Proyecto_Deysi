@@ -87,6 +87,7 @@ export default function Index({ auth, products }) {
                                     <tr>
                                         {/* Título de la columna ID ajustado */}
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">ID.CREADOR</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Imagen</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Descripción</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Precio</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Stock</th>
@@ -105,6 +106,13 @@ export default function Index({ auth, products }) {
                                                     {product.id_usuario || '?'}
                                                 </span>
                                             </td>
+                                             <td className="px-6 py-4">
+                <img 
+                    src={product.image_url} // <-- Usamos el accesor del modelo
+                    alt={product.description} 
+                    className="h-16 w-16 object-cover rounded-md" 
+                />
+            </td>
 
                                             <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white">
                                                 {product.description}

@@ -107,6 +107,11 @@ export default function Dashboard({ auth, products }) {
                                         <h3 className="text-2xl font-extrabold text-gray-900 mb-2 truncate dark:text-gray-100">
                                             {product.name}
                                         </h3>
+                                        <img
+                                        alt={product.name}
+                                         src={product.image_url}
+                                        className="w-full h-48 object-cover"
+                                    />
 
                                         <p className="text-3xl font-bold text-green-600 mb-4 dark:text-green-400">
                                             {formatPrice(product.price)}
