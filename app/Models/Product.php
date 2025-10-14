@@ -21,6 +21,7 @@ class Product extends Model
         'id_usuario', // ESTO permite que el controlador guarde el valor.
         'stock',
         'image_path',
+        'category_id'
     ];
     
     protected $appends = ['image_url'];
@@ -28,6 +29,10 @@ class Product extends Model
      * Relación con el usuario creador.
      * Laravel busca por defecto 'user_id', así que debemos especificar la clave.
      */
+     public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
       public function getImageUrlAttribute()
     {
         if ($this->image_path) {

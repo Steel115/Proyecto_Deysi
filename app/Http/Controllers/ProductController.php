@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\ActivityLog;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage; // ¡Importante! Asegúrate de que esté importado.
-
+use App\Models\Category;
 class ProductController extends Controller
 {
     /**
@@ -19,8 +19,7 @@ class ProductController extends Controller
     public function index()
     {
         // con el ID del usuario autenticado.
-        $products = Product::where('id_usuario', auth()->id())->get();
-
+        $products = Product::with('category')->where('id_usuario', auth()->id())->get();
         // Envía los productos a la vista Inertia.js (Products/Index)
         return Inertia::render('Products/Index', [
             'products' => $products,
@@ -32,7 +31,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Products/Create');
+        return Inertia::render('Products/Create', [
+            'categories' => Category::all(['id', 'name']),
+        ]);
+
     }
 
     /**
@@ -53,7 +55,9 @@ class ProductController extends Controller
             $validated['image_path'] = $path;
         }
         // --- FIN DE LA LÓGICA DE IMAGEN ---
-
+        $request->validate([
+            'category_id' => 'nullable|exists:categories,id'
+        ]);
         // 3. Crear el producto
         $product = Product::create($validated);
 
@@ -67,7 +71,7 @@ class ProductController extends Controller
                 'details' => 'Producto creado: ' . $product->description . ' con Stock Inicial: ' . $product->stock,
             ]);
         }
-    
+
         return Redirect::route('products.index')->with('success', 'Producto creado exitosamente.');
     }
 
@@ -78,11 +82,12 @@ class ProductController extends Controller
     {
         // Se asegura que solo el creador pueda editar
         if (auth()->id() !== $product->id_usuario) {
-             return redirect()->route('products.index')->with('error', 'No tienes permiso para editar este producto.');
+            return redirect()->route('products.index')->with('error', 'No tienes permiso para editar este producto.');
         }
 
         return Inertia::render('Products/Edit', [
             'product' => $product,
+            'categories' => Category::all(['id', 'name'])
         ]);
     }
 
@@ -93,15 +98,16 @@ class ProductController extends Controller
     {
         // Se asegura que solo el creador pueda actualizar
         if (auth()->id() !== $product->id_usuario) {
-             return redirect()->route('products.index')->with('error', 'No tienes permiso para actualizar este producto.');
+            return redirect()->route('products.index')->with('error', 'No tienes permiso para actualizar este producto.');
         }
-        
+
         // 1. VALIDACIÓN
         $validated = $request->validate([
             'description' => 'required|string|max:1000',
             'price' => 'required|numeric|min:0.01',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validación para la imagen (opcional)
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category_id' => 'nullable|exists:categories,id', // Validación para la imagen (opcional)
         ]);
 
         // --- LÓGICA PARA ACTUALIZAR LA IMAGEN ---

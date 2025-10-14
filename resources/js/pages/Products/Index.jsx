@@ -89,6 +89,7 @@ export default function Index({ auth, products }) {
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">ID.CREADOR</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Imagen</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Descripción</th>
+                                        <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Categoria</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Precio</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Stock</th>
                                         <th className="px-6 py-3 text-left text-xl font-medium uppercase tracking-wider">Acciones</th>
@@ -116,6 +117,12 @@ export default function Index({ auth, products }) {
 
                                             <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white">
                                                 {product.description}
+                                            </td>
+                                            
+                                           <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="px-2.5 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                    {product.category ? product.category.name : 'N/A'}
+                                                </span>
                                             </td>
 
                                             <td className="px-6 py-4 whitespace-nowrap text-xl text-green-500 dark:text-green-400">

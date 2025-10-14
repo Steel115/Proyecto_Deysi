@@ -4,12 +4,13 @@ import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
-export default function Create({ auth }) {
+export default function Create({ auth, categories  }) {
     const { data, setData, post, processing, errors } = useForm({
         description: '',
         price: '',
         stock: 0,
         image: null,
+        category_id: '',
     });
 
     const submit = (e) => {
@@ -44,6 +45,24 @@ export default function Create({ auth }) {
                                 />
                                 {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description}</div>}
                             </div>
+                            <div className="mb-4">
+                    <label htmlFor="category_id" className="block text-2xl font-medium text-gray-900 dark:text-white">Categoría</label>
+                    <select
+                        id="category_id"
+                        name="category_id"
+                        value={data.category_id}
+                        onChange={(e) => setData('category_id', e.target.value)}
+                        className="mt-1 block w-full border border-gray-500 rounded-md shadow-xl p-3 dark:bg-gray-500"
+                    >
+                        <option value="">Selecciona una categoría</option>
+                        {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.category_id && <div className="text-red-500 mt-2 text-sm">{errors.category_id}</div>}
+                </div>
 
                             {/* Campo Precio */}
                             <div className="mb-6">

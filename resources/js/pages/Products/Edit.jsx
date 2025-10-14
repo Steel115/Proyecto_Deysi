@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, useForm } from '@inertiajs/react';
 
 // El componente recibe el 'product' que le pasamos desde el controlador
-export default function Edit({ auth, product }) {
+export default function Edit({ auth, product, categories }) {
 
     // Inicializa el formulario con los datos del producto existente
     const { data, setData, put, processing, errors } = useForm({
@@ -46,6 +46,24 @@ export default function Edit({ auth, product }) {
                                 />
                                 {errors.description && <div className="text-red-500 mt-2 text-sm">{errors.description}</div>}
                             </div>
+                            <div className="mb-4">
+                    <label htmlFor="category_id" className="block text-2xl font-medium text-gray-900 dark:text-white">Categoría</label>
+                    <select
+                        id="category_id"
+                        name="category_id"
+                        value={data.category_id}
+                        onChange={(e) => setData('category_id', e.target.value)}
+                        className="mt-1 block w-full border border-gray-500 rounded-md shadow-xl p-3 dark:bg-gray-500"
+                    >
+                        <option value="">Selecciona una categoría</option>
+                        {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.category_id && <div className="text-red-500 mt-2 text-sm">{errors.category_id}</div>}
+                </div>
 
                             {/* Campo de Precio */}
                             <div className="mb-6">
