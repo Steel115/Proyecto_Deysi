@@ -46,4 +46,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+     public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    // Obtener órdenes completadas
+    public function completedOrders()
+    {
+        return $this->orders()->completed();
+    }
 }

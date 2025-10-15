@@ -34,6 +34,17 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            
+            // ===================================================
+            // INICIO DEL CÓDIGO AÑADIDO (Bloque 'flash')
+            // ===================================================
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
+            // ===================================================
+            // FIN DEL CÓDIGO AÑADIDO
+            // ===================================================
         ];
     }
 }
