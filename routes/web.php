@@ -66,6 +66,8 @@ Route::middleware('auth')->group(function () {
         ->name('report.activity.download');
 
     // Rutas de Carrito
+
+    // Rutas de Carrito
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/complete-purchase', [CartController::class, 'completePurchase'])->name('cart.completePurchase');
 

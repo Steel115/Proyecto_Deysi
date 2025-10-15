@@ -109,7 +109,7 @@ export default function Index({ auth, products }) {
                                             </td>
                                              <td className="px-6 py-4">
                 <img 
-                    src={product.image_url} // <-- Usamos el accesor del modelo
+                    src={product.image_url}
                     alt={product.description} 
                     className="h-16 w-16 object-cover rounded-md" 
                 />

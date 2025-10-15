@@ -13,99 +13,116 @@ class CartController extends Controller
 {
     public function index(Request $request)
     {
-        $items = $request->query('items') ? json_decode($request->query('items'), true) : [];
+        // Esta parte es para mostrar el carrito, la dejaremos como está
+        $itemsData = $request->query('items') ? json_decode($request->query('items'), true) : [];
+        $productIds = array_column($itemsData, 'id');
+
+        $products = Product::findMany($productIds)->keyBy('id');
+
+        $initialCartItems = [];
+        foreach ($itemsData as $item) {
+            if (isset($products[$item['id']])) {
+                $product = $products[$item['id']];
+                $initialCartItems[] = [
+                    'id' => $product->id,
+                    'name' => $product->description, // Aseguramos que el nombre viene de la DB
+                    'price' => $product->price,
+                    'quantity' => $item['quantity'],
+                    'stock' => $product->stock,
+                    'image_url' => $product->image_url,
+                ];
+            }
+        }
+
         return Inertia::render('Cart', [
-            'initialCartItems' => $items,
+            'initialCartItems' => $initialCartItems,
         ]);
     }
 
     public function completePurchase(Request $request)
     {
-        $items = $request->input('items', []);
+        $cartItems = $request->input('items', []);
         $paymentMethod = $request->input('payment_method', 'card');
-        $total = $request->input('total', 0);
 
-        if (empty($items)) {
-            return redirect()->back()->with([
-                'error' => 'No hay productos en el carrito.'
-            ]);
+        if (empty($cartItems)) {
+            return back()->with('error', 'No hay productos en el carrito.');
         }
 
         try {
             DB::beginTransaction();
 
-            // Verificar stock y bloquear registros para actualización
-            foreach ($items as $item) {
+            $totalCalculado = 0;
+
+            foreach ($cartItems as $item) {
+                // Buscamos el producto en la DB para obtener sus datos reales (precio, nombre, stock)
                 $product = Product::lockForUpdate()->find($item['id']);
-                
+
+                // --- CAMBIO CLAVE 1: Usar el nombre del producto de la DB ---
                 if (!$product) {
                     DB::rollBack();
-                    return redirect()->back()->with([
-                        'error' => "Producto no encontrado: {$item['name']}"
-                    ]);
+                    // Usamos una descripción genérica ya que no tenemos el nombre
+                    return back()->with('error', "Uno de los productos en tu carrito ya no existe.");
                 }
 
                 if ($product->stock < $item['quantity']) {
                     DB::rollBack();
-                    return redirect()->back()->with([
-                        'error' => "Stock insuficiente para {$product->name}. Disponible: {$product->stock}, Solicitado: {$item['quantity']}"
-                    ]);
+                    // Usamos el nombre real del producto ($product->description)
+                    return back()->with('error', "Stock insuficiente para {$product->description}. Disponible: {$product->stock}.");
                 }
             }
 
-            // Crear orden
+            // Crear la orden (con total temporal 0)
             $order = Order::create([
                 'user_id' => auth()->id(),
-                'total' => $total,
+                'total' => 0, // Se actualizará al final
                 'payment_method' => $paymentMethod,
                 'status' => 'completed'
             ]);
 
-            // Procesar items y actualizar stock
-            foreach ($items as $item) {
-                $product = Product::lockForUpdate()->find($item['id']);
-                
-                if (!$product) {
-                    continue; // Saltar productos no encontrados
-                }
+            foreach ($cartItems as $item) {
+                $product = Product::find($item['id']); // No necesita lock aquí porque ya lo validamos
 
-                // Crear item de la orden
+                // Acumulamos el total usando el precio del servidor (más seguro)
+                $totalCalculado += $product->price * $item['quantity'];
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                    'name' => $item['name']
+                    'price' => $product->price, // Usamos el precio del servidor
+                    'name' => $product->description // --- CAMBIO CLAVE 2: Usar el nombre de la DB ---
                 ]);
+
                 $product->decrement('stock', $item['quantity']);
-          
             }
+
+            // Actualizamos la orden con el total final calculado en el servidor
+            $order->total = $totalCalculado * 1.15; // Aplicamos el IVA del 15%
+            $order->save();
 
             DB::commit();
 
-            // DEBUG: Verificar stock actualizado
-            \Log::info('Compra completada - Stock actualizado', [
-                'order_id' => $order->id,
-                'user_id' => auth()->id(),
-                'items' => $items
-            ]);
+            // Preparamos los datos para el modal de éxito con datos reales
+            $orderDataForFrontend = [
+                'orderNumber' => 'ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT),
+                'total' => number_format($order->total, 2),
+                'paymentMethod' => $order->payment_method,
+                'date' => $order->created_at->format('d/m/Y'),
+                'items' => count($cartItems)
+            ];
 
-            return redirect()->route('cart.index')->with([
-                'success' => '¡Compra completada exitosamente! Stock actualizado.',
-                'order_id' => $order->id
+            return Inertia::render('Cart', [
+                'initialCartItems' => [], // carrito vacío
+                'flash' => [
+                    'success' => '¡Compra completada exitosamente!',
+                ],
+                'order' => $orderDataForFrontend, // enviamos directamente
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
-            \Log::error('Error en completePurchase: ' . $e->getMessage(), [
-                'user_id' => auth()->id(),
-                'items' => $items
-            ]);
-            
-            return redirect()->back()->with([
-                'error' => 'Error al procesar la compra: ' . $e->getMessage()
-            ]);
+            \Log::error('Error en completePurchase: ' . $e->getMessage());
+            return back()->with('error', 'Error al procesar la compra: ' . $e->getMessage());
         }
     }
 }

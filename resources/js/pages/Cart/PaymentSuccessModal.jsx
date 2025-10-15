@@ -4,7 +4,7 @@ import { router } from '@inertiajs/react';
 const PaymentSuccessModal = ({ isOpen, onClose, orderDetails }) => {
     const [progress, setProgress] = useState(100);
     const [timeLeft, setTimeLeft] = useState(5);
-
+    console.log(orderDetails)
     useEffect(() => {
         if (isOpen) {
             let timer;

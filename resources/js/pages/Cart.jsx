@@ -15,36 +15,40 @@ const formatPrice = (price) => {
 };
 
 export default function Cart({ auth, initialCartItems = [] }) {
-    const { flash } = usePage().props;
+    const { flash, order } = usePage().props;
+
     const [cartItems, setCartItems] = useState(initialCartItems);
     const [message, setMessage] = useState(null);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [orderDetails, setOrderDetails] = useState(null);
+    const [orderDetails, setOrderDetails] = useState(order || null);
+    const [showSuccessModal, setShowSuccessModal] = useState(!!order);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    // Mostrar modal si viene order desde backend
+    useEffect(() => {
+        if (order) {
+            setOrderDetails(order);
+            setShowSuccessModal(true);
+        }
+    }, [order]);
 
     // Manejar flash messages de Laravel
     useEffect(() => {
         if (flash.success) {
             setMessage({ type: 'success', text: flash.success });
-            // No vaciamos el carrito aquí porque viene vacío desde el backend
         } else if (flash.error) {
             setMessage({ type: 'error', text: flash.error });
         }
     }, [flash]);
 
-    // También manejar el carrito inicial (viene vacío después de una compra exitosa)
     useEffect(() => {
         setCartItems(initialCartItems);
     }, [initialCartItems]);
 
     const { subtotal, tax, total } = React.useMemo(() => {
-        const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const taxRate = 0.15;
-        const tax = subtotal * taxRate;
-        const total = subtotal + tax;
-        
-        return { subtotal, tax, total };
+        const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const tax = subtotal * 0.15;
+        return { subtotal, tax, total: subtotal + tax };
     }, [cartItems]);
 
     const updateQuantity = useCallback((id, change) => {
@@ -52,15 +56,10 @@ export default function Cart({ auth, initialCartItems = [] }) {
             prev.map(item => {
                 if (item.id === id) {
                     const newQty = Math.max(1, item.quantity + change);
-                    
                     if (item.stock && newQty > item.stock) {
-                        setMessage({ 
-                            type: 'warning', 
-                            text: `Stock insuficiente. Máximo disponible: ${item.stock}` 
-                        });
+                        setMessage({ type: 'warning', text: `Stock insuficiente. Máximo disponible: ${item.stock}` });
                         return { ...item, quantity: item.stock };
                     }
-                    
                     return { ...item, quantity: newQty };
                 }
                 return item;
@@ -71,10 +70,7 @@ export default function Cart({ auth, initialCartItems = [] }) {
     const removeItem = useCallback((id) => {
         const itemToRemove = cartItems.find(item => item.id === id);
         setCartItems(prev => prev.filter(item => item.id !== id));
-        setMessage({ 
-            type: 'warning', 
-            text: `"${itemToRemove?.name}" eliminado del carrito.` 
-        });
+        setMessage({ type: 'warning', text: `"${itemToRemove?.name}" eliminado del carrito.` });
     }, [cartItems]);
 
     const handleCheckout = () => {
@@ -82,82 +78,42 @@ export default function Cart({ auth, initialCartItems = [] }) {
             setMessage({ type: 'warning', text: 'Tu carrito está vacío.' });
             return;
         }
-
         const outOfStockItems = cartItems.filter(item => item.stock < item.quantity);
         if (outOfStockItems.length > 0) {
-            setMessage({ 
-                type: 'error', 
-                text: `Algunos productos no tienen suficiente stock disponible.` 
-            });
+            setMessage({ type: 'error', text: `Algunos productos no tienen suficiente stock disponible.` });
             return;
         }
-
         setIsCheckingOut(true);
         setMessage(null);
     };
 
-    // Manejar completación del pago - ACTUALIZADO para Inertia
-
-    const handlePaymentComplete = useCallback(async (success, paymentMethod) => {
-    setIsCheckingOut(false);
-    
-    if (success) {
-        setIsProcessing(true);
-        
-        try {
-            const orderDetailsData = {
-                orderNumber: 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-                total: formatPrice(total),
-                paymentMethod: paymentMethod,
-                date: new Date().toLocaleDateString('es-MX'),
-                items: cartItems.length
-            };
-
-            await router.post(route('cart.completePurchase'), { 
-                items: cartItems,
-                payment_method: paymentMethod,
-                total: total
-            }, {
-                preserveScroll: true,
-                onSuccess: (page) => {
-                    // Verificar si hay mensaje de éxito
-                    if (page.props.flash.success) {
-                        setOrderDetails(orderDetailsData);
-                        setShowSuccessModal(true);
-                        setMessage(null);
-                        // El carrito se vacía automáticamente porque initialCartItems viene vacío
-                    } else if (page.props.flash.error) {
-                        setMessage({ type: 'error', text: page.props.flash.error });
-                    }
-                },
-                onError: (errors) => {
-                    console.error('Error del servidor:', errors);
-                    const errorMsg = errors?.message || 
-                                   errors?.items?.[0] ||
-                                   'Error al procesar el pedido. Por favor, intenta nuevamente.';
-                    setMessage({ type: 'error', text: errorMsg });
-                }
-            });
-
-        } catch (error) {
-            console.error('Error de conexión:', error);
-            setMessage({ 
-                type: 'error', 
-                text: 'Error de conexión. Por favor, intenta nuevamente.' 
-            });
-        } finally {
-            setIsProcessing(false);
+    const handlePaymentComplete = useCallback((success, paymentMethod) => {
+        setIsCheckingOut(false);
+        if (!success) {
+            setMessage({ type: 'error', text: 'Tarjeta rechazada. Verifica los datos.' });
+            return;
         }
-    } else {
-        setMessage({ 
-            type: 'error', 
-            text: paymentMethod === 'paypal' 
-                ? 'Error en la autenticación de PayPal. Verifica tus credenciales.'
-                : 'Tarjeta rechazada. Verifica los datos o intenta con otra tarjeta.'
+        setIsProcessing(true);
+
+        router.post(route('cart.completePurchase'), {
+            items: cartItems.map(item => ({ id: item.id, quantity: item.quantity })),
+            payment_method: paymentMethod,
+        }, {
+            preserveScroll: true,
+            onSuccess: page => {
+                if (page.props.flash.success && page.props.flash.order) {
+                    setOrderDetails(page.props.flash.order);
+                    setShowSuccessModal(true);
+                    setMessage(null);
+                } else if (page.props.flash.error) {
+                    setMessage({ type: 'error', text: page.props.flash.error });
+                }
+            },
+            onError: () => setMessage({ type: 'error', text: 'Error al procesar el pedido. Por favor, intenta nuevamente.' }),
+            onFinish: () => setIsProcessing(false)
         });
-    }
-}, [cartItems, total]);
-    // Auto-ocultar mensajes
+    }, [cartItems]);
+
     useEffect(() => {
         if (message && message.type !== 'success') {
             const timer = setTimeout(() => setMessage(null), 5000);
@@ -166,16 +122,8 @@ export default function Cart({ auth, initialCartItems = [] }) {
     }, [message]);
 
     if (isCheckingOut) {
-        return (
-            <PaymentForm
-                auth={auth}
-                total={total}
-                onPaymentComplete={handlePaymentComplete}
-                onCancel={() => setIsCheckingOut(false)}
-            />
-        );
+        return <PaymentForm auth={auth} total={total} onPaymentComplete={handlePaymentComplete} onCancel={() => setIsCheckingOut(false)} />;
     }
-
     return (
         <>
             <AuthenticatedLayout 

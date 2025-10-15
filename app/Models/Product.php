@@ -18,7 +18,7 @@ class Product extends Model
     protected $fillable = [
         'description',
         'price',
-        'id_usuario', // ESTO permite que el controlador guarde el valor.
+        'id_usuario', 
         'stock',
         'image_path',
         'category_id'

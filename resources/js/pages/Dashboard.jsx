@@ -103,6 +103,18 @@ export default function Dashboard({ auth, products, filters, categories   }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                                        <div className="mb-4">
+                        <form onSubmit={handleSearch}>
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Buscar por producto, categoría o usuario..."
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            />
+                        </form>
+                    </div>
+
                      <div className="flex flex-wrap items-center gap-2 mb-8">
                         <button
                             onClick={() => handleCategoryFilter('')}
