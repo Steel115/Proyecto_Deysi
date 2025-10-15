@@ -191,6 +191,8 @@ export default function Cart({ auth, initialCartItems = [] }) {
                                                         <p className="font-semibold text-gray-900 dark:text-white truncate">
                                                             {item.name}
                                                         </p>
+                                                        <img src={item.image_url || '/images/default.jpg'} alt={item.name} className="w-16 h-16 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                                                         onError={(e) => (e.target.src = '/images/default.jpg')} />
                                                         <p className="text-sm text-gray-500 dark:text-gray-400">
                                                             {formatPrice(item.price)} c/u
                                                         </p>

@@ -189,87 +189,97 @@ export default function Dashboard({ auth, products, filters, categories   }) {
 
             {/* MODAL DE DETALLE DEL PRODUCTO */}
             {selectedProduct && (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div className="bg-gray-900 text-gray-100 rounded-2xl shadow-2xl max-w-lg w-full p-8 transition-transform transform scale-100 border border-gray-700">
-            {/* Encabezado */}
-            <h2 className="text-3xl font-bold text-white border-b border-gray-700 pb-3 mb-4 flex items-center justify-between">
-                Detalle del Producto
-                <button
-                    onClick={closeModal}
-                    className="text-gray-400 hover:text-gray-200 transition duration-150"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                        />
-                    </svg>
-                </button>
-            </h2>
+   <div className="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4">
+  <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-2xl shadow-2xl max-w-lg w-full p-8 transition-all transform scale-100 border border-gray-200 dark:border-gray-700">
+    
+    {/* Encabezado */}
+    <h2 className="text-3xl font-bold text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-3 mb-4 flex items-center justify-between">
+      Detalle del Producto
+      <button
+        onClick={closeModal}
+        className="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition duration-150"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </h2>
 
-            {/* Contenido */}
-            <div className="space-y-4">
-                {/* Imagen del producto */}
-                {selectedProduct.image_url && (
-                    <div className="w-full flex justify-center mb-4">
-                        <img
-                            src={selectedProduct.image_url}
-                            alt={selectedProduct.description}
-                            className="rounded-xl shadow-lg max-h-60 object-contain"
-                        />
-                    </div>
-                )}
-
-                {/* Nombre */}
-                <p className="text-2xl font-extrabold text-indigo-400">
-                    {selectedProduct.description}
-                </p>
-
-                {/* Categoría */}
-                {selectedProduct.category && (
-                    <p className="text-sm text-gray-400 italic">
-                        Categoría: <span className="text-indigo-300 font-medium">{selectedProduct.category.name}</span>
-                    </p>
-                )}
-                {/* Precio */}
-                <p className="text-lg text-gray-200">
-                    Precio: <span className="font-bold text-green-400">{formatPrice(selectedProduct.price)}</span>
-                </p>
-
-                {/* Usuario y ID */}
-                <p className="text-md text-gray-400 border-t border-gray-700 pt-3">
-                    <span className="font-semibold">Agregado por:</span> {selectedProduct.user.name}
-                </p>
-                <p className="text-sm text-gray-500">
-                    <span className="font-semibold">ID Global:</span> {selectedProduct.id}
-                </p>
-            </div>
-
-            {/* Botones */}
-            <div className="mt-6 flex justify-end space-x-4">
-                <button
-                    onClick={closeModal}
-                    className="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-4 focus:ring-gray-600"
-                >
-                    Cerrar
-                </button>
-                <button
-                    onClick={() => addToCart(selectedProduct)}
-                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-4 focus:ring-green-400"
-                >
-                    Añadir al Carrito
-                </button>
-            </div>
+    {/* Contenido */}
+    <div className="space-y-4">
+      {/* Imagen del producto */}
+      {selectedProduct.image_url && (
+        <div className="w-full flex justify-center mb-4">
+          <img
+            src={selectedProduct.image_url}
+            alt={selectedProduct.description}
+            className="rounded-xl shadow-lg max-h-60 object-contain"
+          />
         </div>
+      )}
+
+      {/* Nombre */}
+      <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
+        {selectedProduct.description}
+      </p>
+
+      {/* Categoría */}
+      {selectedProduct.category && (
+        <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+          Categoría:{" "}
+          <span className="text-indigo-500 dark:text-indigo-300 font-medium">
+            {selectedProduct.category.name}
+          </span>
+        </p>
+      )}
+
+      {/* Precio */}
+      <p className="text-lg text-gray-800 dark:text-gray-200">
+        Precio:{" "}
+        <span className="font-bold text-green-600 dark:text-green-400">
+          {formatPrice(selectedProduct.price)}
+        </span>
+      </p>
+
+      {/* Usuario y ID */}
+      <p className="text-md text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3">
+        <span className="font-semibold">Agregado por:</span>{" "}
+        {selectedProduct.user.name}
+      </p>
+      <p className="text-sm text-gray-500 dark:text-gray-500">
+        <span className="font-semibold">ID Global:</span> {selectedProduct.id}
+      </p>
     </div>
+
+    {/* Botones */}
+    <div className="mt-6 flex justify-end space-x-4">
+      <button
+        onClick={closeModal}
+        className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+      >
+        Cerrar
+      </button>
+      <button
+        onClick={() => addToCart(selectedProduct)}
+        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-4 focus:ring-green-400"
+      >
+        Añadir al Carrito
+      </button>
+    </div>
+  </div>
+</div>
+
 
             )}
         </AuthenticatedLayout>
