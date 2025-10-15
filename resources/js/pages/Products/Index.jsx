@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
-// Restaurando el alias estándar de Laravel/Inertia
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
-// Restaurando el alias estándar de Laravel/Inertia
 import ConfirmationModal from '@/Components/ConfirmationModal';
 
-// El componente recibe 'auth' y 'products' (la lista de productos)
 export default function Index({ auth, products }) {
-
-    // 1. ESTADOS PARA EL MODAL DE ELIMINACIÓN
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
-
-    // 2. ESTADOS PARA EL MODAL DE AGREGAR AL CARRITO
     const [showCartModal, setShowCartModal] = useState(false);
     const [productToBuy, setProductToBuy] = useState(null);
 
@@ -25,15 +18,11 @@ export default function Index({ auth, products }) {
         }).format(price);
     };
 
-    // --- LÓGICA PARA ELIMINAR ---
-
-    // Abre el modal de eliminación
     const handleDeleteClick = (product) => {
         setProductToDelete(product);
         setShowDeleteModal(true);
     };
 
-    // Confirma la eliminación y llama al backend (DELETE)
     const confirmDeletion = () => {
         if (productToDelete) {
             router.delete(route('products.destroy', productToDelete.id), {
@@ -45,13 +34,33 @@ export default function Index({ auth, products }) {
         }
     };
 
-    // Función para cerrar cualquier modal sin hacer nada
     const handleCloseModal = () => {
         setShowDeleteModal(false);
         setShowCartModal(false);
         setProductToDelete(null);
         setProductToBuy(null);
     };
+
+    const getCategoryClasses = (categoryName) => {
+    switch (categoryName) {
+        case 'Hogar':
+            return 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100';
+        case 'Electrónica':
+            return 'bg-teal-100 text-teal-800 dark:bg-teal-700 dark:text-teal-100';
+        case 'Ropa y Accesorios':
+            return 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-100';
+        case 'Alimentos y Bebidas':
+            return 'bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-100';
+        case 'Juguetes y Juegos':
+            return 'bg-violet-100 text-violet-800 dark:bg-violet-800 dark:text-violet-100';
+        case 'Salud y Belleza':
+            return 'bg-lime-100 text-lime-800 dark:bg-lime-800 dark:text-lime-100';
+        case 'Deportes':
+            return 'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-800 dark:text-fuchsia-100';
+        default:
+            return 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300';
+    }
+};
 
 
     return (
@@ -62,7 +71,7 @@ export default function Index({ auth, products }) {
             <Head title="Productos" />
 
             <div className="py-20">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="max-w-1xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-2xl sm:rounded-lg p-9 dark:bg-gray-800
                     ">
 
@@ -107,20 +116,22 @@ export default function Index({ auth, products }) {
                                                     {product.id_usuario || '?'}
                                                 </span>
                                             </td>
-                                             <td className="px-6 py-4">
-                <img 
-                    src={product.image_url}
-                    alt={product.description} 
-                    className="h-16 w-16 object-cover rounded-md" 
-                />
-            </td>
+                                            <td className="px-6 py-4">
+                                                <img
+                                                    src={product.image_url}
+                                                    alt={product.description}
+                                                    className="h-16 w-16 object-cover rounded-md"
+                                                />
+                                            </td>
 
                                             <td className="px-6 py-4 text-xl text-gray-900 max-w-lg overflow-hidden truncate font-bold transition duration-150 dark:text-white">
                                                 {product.description}
                                             </td>
-                                            
-                                           <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="px-2.5 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span
+                                                    className={`px-2.5 py-1 text-sm font-semibold rounded-full ${getCategoryClasses(product.category ? product.category.name : 'N/A')}`}
+                                                >
                                                     {product.category ? product.category.name : 'N/A'}
                                                 </span>
                                             </td>
@@ -130,12 +141,11 @@ export default function Index({ auth, products }) {
                                             </td>
                                             {/* Columna Stock */}
                                             <td className="px-6 py-4 whitespace-nowrap text-lg font-bold">
-                                                <span className={`px-2 py-1 inline-flex text-base leading-5 rounded-full ${
-                                                    product.stock > 10 ?
-                                                        'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
-                                                        product.stock > 4 ?
-                                                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
-                                                            'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' // Stock <= 0
+                                                <span className={`px-2 py-1 inline-flex text-base leading-5 rounded-full ${product.stock > 10 ?
+                                                    'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                                                    product.stock > 4 ?
+                                                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                                                        'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' // Stock <= 0
                                                     } dark:bg-opacity-20 dark:text-opacity-100`}>
                                                     {product.stock} unidades
                                                 </span>
@@ -182,15 +192,14 @@ export default function Index({ auth, products }) {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">
+            <div className="max-w-1xl mx-auto sm:px-6 lg:px-8 mt-6">
                 <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-right dark:bg-gray-800">
-                    {/* CAMBIO CLAVE: Usamos 'a' en lugar de 'Link' para forzar la descarga sin Inertia */}
+                    {/*Enlace para PDF*/}
                     <a
                         href={route('report.activity.download')}
-                        target="_blank" // Esto ayuda a asegurar la nueva navegación
+                        target="_blank" 
                         className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
                     >
-                        {/* ... SVG Icon ... */}
                         Descargar Reporte de Actividad (PDF)
                     </a>
                 </div>
