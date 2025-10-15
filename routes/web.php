@@ -8,7 +8,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Product;
-use Illuminate\Http\Request; 
+use App\Models\Category;
+use Illuminate\Http\Request;
 
 
 Route::get('/', function () {
@@ -20,33 +21,37 @@ Route::get('/', function () {
     ]);
 });
 
-// RUTA DEL DASHBOARD CON BÚSQUEDA Y PAGINACIÓN
+
 Route::get('/dashboard', function (Request $request) {
+
+    $categories = Category::all();
 
 
     $productsQuery = Product::query()->with(['user:id,name', 'category']);
 
+
     $productsQuery->when($request->input('search'), function ($query, $searchTerm) {
         $query->where(function ($subQuery) use ($searchTerm) {
-
             $subQuery->where('description', 'like', "%{$searchTerm}%")
-
                 ->orWhereHas('category', function ($categoryQuery) use ($searchTerm) {
                     $categoryQuery->where('name', 'like', "%{$searchTerm}%");
                 })
-
                 ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
                     $userQuery->where('name', 'like', "%{$searchTerm}%");
                 });
         });
     });
 
+    $productsQuery->when($request->input('category'), function ($query, $categoryId) {
+        $query->where('category_id', $categoryId);
+    });
+
     $products = $productsQuery->paginate(12)->withQueryString();
 
     return Inertia::render('Dashboard', [
         'products' => $products,
-
-        'filters' => $request->only('search'),
+        'categories' => $categories,
+        'filters' => $request->only(['search', 'category']),
     ]);
 
 })->middleware(['auth', 'verified'])->name('dashboard');
